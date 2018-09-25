@@ -18,9 +18,7 @@ public class Persistents {
     private static final ThreadLocal<Connection> DB_CONNECTION_THREADLOCAL = new ThreadLocal<>();
 
     static {
-        Persistents.<String>doQuery("", new HashMap<>(), resultSet -> {
-            return "1";
-        });
+
     }
 
 
