@@ -28,5 +28,6 @@
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
+    <orderEntry type="library" exported="" name="Tomcat 8.5.33" level="application_server_libraries" />
   </component>
 </module>
