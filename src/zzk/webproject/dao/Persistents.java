@@ -33,7 +33,7 @@ public class Persistents {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            erasure(connection);
+            erasure();
         }
         return update;
     }
@@ -59,7 +59,7 @@ public class Persistents {
                     e.printStackTrace();
                 }
             }
-            erasure(connection);
+            erasure();
         }
         return result;
     }
@@ -80,14 +80,16 @@ public class Persistents {
         return connection;
     }
 
-    public static void erasure(Connection connection) {
-        if (connection == DB_CONNECTION_THREADLOCAL.get()) {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            DB_CONNECTION_THREADLOCAL.remove();
+    public static void erasure() {
+        Connection connection = DB_CONNECTION_THREADLOCAL.get();
+        if (null == connection) {
+            return;
         }
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        DB_CONNECTION_THREADLOCAL.remove();
     }
 }
