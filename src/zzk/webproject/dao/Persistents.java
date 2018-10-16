@@ -1,13 +1,8 @@
 package zzk.webproject.dao;
 
 import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 public class Persistents {
     private static final String DB_URL = "jdbc:mysql://localhost:5060/webproject";
@@ -21,11 +16,11 @@ public class Persistents {
 
     }
 
-    public static int doUpdate(String sql, Object... parameters) {
+    public static int doUpdate(String preparedStatementSql, Object... parameters) {
         Connection connection = get();
         int update = -1;
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = connection.prepareStatement(preparedStatementSql);
             for (int index = 0; parameters.length > 0 && index < parameters.length; index++) {
                 preparedStatement.setObject(index, parameters[index]);
             }
