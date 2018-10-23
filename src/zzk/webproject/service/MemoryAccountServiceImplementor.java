@@ -3,8 +3,9 @@ package zzk.webproject.service;
 import java.util.HashMap;
 import java.util.Map;
 
-final class MemoryAccountServiceImplementor extends AccountServiceImplementor {
-    private static final Map<String, String> MEMORY_REALM = new HashMap<>();
+class MemoryAccountServiceImplementor extends AccountServiceImplementor {
+
+    static final Map<String, String> MEMORY_REALM = new HashMap<>();
 
     @Override
     public synchronized boolean register(String username, String password) {
@@ -29,16 +30,16 @@ final class MemoryAccountServiceImplementor extends AccountServiceImplementor {
         return notExistUsername(username);
     }
 
-    private boolean matchRealm(String subject, String principle) {
+    boolean matchRealm(String subject, String principle) {
         String password = MEMORY_REALM.get(subject);
         return password.equals(principle);
     }
 
-    private boolean notExistUsername(String username) {
+    boolean notExistUsername(String username) {
         return !hasExistUsername(username);
     }
 
-    private boolean hasExistUsername(String username) {
+    boolean hasExistUsername(String username) {
         return MEMORY_REALM.containsKey(username);
     }
 }
