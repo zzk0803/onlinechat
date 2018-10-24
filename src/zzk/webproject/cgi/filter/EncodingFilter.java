@@ -1,4 +1,4 @@
-package zzk.webproject.cgi;
+package zzk.webproject.cgi.filter;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;

@@ -9,10 +9,7 @@ class MemoryAccountServiceImplementor extends AccountServiceImplementor {
 
     @Override
     public synchronized boolean register(String username, String password) {
-        if (notExistUsername(username)) {
-            return false;
-        }
-        MEMORY_REALM.put(username, password);
+        put(username, password);
         return hasExistUsername(username);
     }
 
@@ -30,16 +27,20 @@ class MemoryAccountServiceImplementor extends AccountServiceImplementor {
         return notExistUsername(username);
     }
 
-    boolean matchRealm(String subject, String principle) {
+    private String put(String username, String password) {
+        return MEMORY_REALM.put(username, password);
+    }
+
+    private boolean matchRealm(String subject, String principle) {
         String password = MEMORY_REALM.get(subject);
         return password.equals(principle);
     }
 
-    boolean notExistUsername(String username) {
+    private boolean notExistUsername(String username) {
         return !hasExistUsername(username);
     }
 
-    boolean hasExistUsername(String username) {
+    private boolean hasExistUsername(String username) {
         return MEMORY_REALM.containsKey(username);
     }
 }

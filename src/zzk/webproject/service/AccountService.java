@@ -3,7 +3,18 @@ package zzk.webproject.service;
 public class AccountService {
     private AccountServiceImplementor accountService;
 
+    public AccountService() {
+    }
+
     public AccountService(AccountServiceImplementor accountService) {
+        this.accountService = accountService;
+    }
+
+    public AccountServiceImplementor getAccountService() {
+        return accountService;
+    }
+
+    public void setAccountService(AccountServiceImplementor accountService) {
         this.accountService = accountService;
     }
 
