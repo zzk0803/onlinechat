@@ -1,6 +1,6 @@
 package zzk.webproject.service;
 
-public class FacilitatedTestingAccountService extends AccountService {
+class FacilitatedTestingAccountService extends AccountService {
 
     public FacilitatedTestingAccountService() {
     }

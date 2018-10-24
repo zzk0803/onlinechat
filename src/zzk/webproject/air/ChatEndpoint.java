@@ -35,7 +35,6 @@ public class ChatEndpoint {
 
     @OnMessage
     public void message(String message) {
-        System.out.println(message);
         broadcast(getUsername(this.session) + ":" + message);
     }
 

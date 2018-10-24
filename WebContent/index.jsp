@@ -15,6 +15,7 @@
 <html>
     <head>
         <title>Home</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <style>
             body {
                 background-color: black;
@@ -163,7 +164,7 @@
             </div>
         </div>
     </body>
-    <script src="assets/wp.main.js"></script>
-    <script src="assets/wp.air.js"></script>
-    <script src="assets/wp.message.js"></script>
+    <script src="assets/wp.main.js" charset="UTF-8"></script>
+    <script src="assets/wp.air.js" charset="UTF-8"></script>
+    <script src="assets/wp.message.js" charset="UTF-8"></script>
 </html>
