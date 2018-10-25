@@ -12,7 +12,6 @@ window.onload = function () {
 
 wp.main = {
     init: function () {
-        console.log("初始化");
         let oSendBtn = document.getElementById("send");
         oSendBtn.onclick = function (event) {
             let oTextarea = document.getElementById("msg");
