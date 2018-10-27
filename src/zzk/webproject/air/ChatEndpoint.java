@@ -2,12 +2,14 @@ package zzk.webproject.air;
 
 import org.apache.tomcat.websocket.WsSession;
 import zzk.webproject.util.OnlineUserUtil;
+import zzk.webproject.util.SimpleJsonFormatter;
 
 import java.io.IOException;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Timer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,12 +27,14 @@ public class ChatEndpoint {
     public void open(Session session) {
         registerEndpoint(this);
         this.session = session;
+        broadcast(new AirEventMessage("online", getUsername(session)));
     }
 
     @OnClose
     public void end() {
-        session = null;
+        broadcast(new AirEventMessage("offline", getUsername(session)));
         unregisterEndpoint(this);
+        session = null;
     }
 
     @OnMessage
@@ -41,6 +45,7 @@ public class ChatEndpoint {
     @OnError
     public void error(Throwable throwable) {
         throwable.printStackTrace();
+        end();
     }
 
     private void registerEndpoint(ChatEndpoint endpoint) {
@@ -60,6 +65,19 @@ public class ChatEndpoint {
                 endpoint.session.getBasicRemote().sendText(message);
             } catch (IOException ex) {
                 Logger.getLogger(ChatEndpoint.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void broadcast(Object object) {
+        for (ChatEndpoint endpoint : CHAT_ENDPOINTS) {
+            try {
+                if (this == endpoint) {
+                    continue;
+                }
+                endpoint.session.getBasicRemote().sendText(SimpleJsonFormatter.toJsonString(object));
+            } catch (IOException e) {
+                Logger.getLogger(ChatEndpoint.class.getName()).log(Level.SEVERE, null, e);
             }
         }
     }

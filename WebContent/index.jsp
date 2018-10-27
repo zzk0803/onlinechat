@@ -22,13 +22,14 @@
         <div id="centered-box">
             <div id="left-full-height">
                 <ul id="left-items">
-
                 </ul>
             </div>
             <div id="right-full-height">
                 <div id="right-up-is-8">
+                    <!--region 聊天信息-->
                     <ul id="received">
                     </ul>
+                    <!--endregion-->
                 </div>
                 <div id="right-lower-is-2">
                     <div id="message-zone">

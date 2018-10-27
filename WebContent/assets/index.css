@@ -63,6 +63,15 @@ body {
     float: right;
 }
 
+#right-up-is-8 > ul#received > li.apprise {
+    display: block;
+    text-align: center;
+    font-size: xx-small;
+    background-color: dimgray;
+    border-radius: 20px;
+    padding: 2px;
+}
+
 #right-lower-is-2 {
     height: 25%;
     background-color: white;

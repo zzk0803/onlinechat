@@ -9,6 +9,7 @@ wp.air = {
         };
 
         this.websocket.onmessage = function (event) {
+            console.log(event);
             let received = event.data;
             wp.message.appendReceivedMessage(received);
         };

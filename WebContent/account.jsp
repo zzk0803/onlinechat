@@ -27,6 +27,7 @@
 
             #account-box *.field {
                 margin: 10px;
+                width: 80%;
             }
 
             #account-box *.field input {
@@ -38,8 +39,10 @@
                 font-weight: bolder;
             }
 
-            #account-box *.field button {
-                padding: 5px 20px;
+            #account-box *.field #login-btn {
+                display: block;
+                margin: 0 auto;
+                padding: 5px 35px;
                 border: none;
                 background-color: mediumaquamarine;
                 font-weight: bolder;
@@ -58,7 +61,7 @@
                     <input type="password" id="password" name="password"/>
                 </div>
                 <div class="field">
-                    <button type="submit">登录</button>
+                    <button id="login-btn" type="submit">登录</button>
                 </div>
             </form>
         </div>
