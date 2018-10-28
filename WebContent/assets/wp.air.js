@@ -1,4 +1,4 @@
-wp.air = {
+;wp.air = {
     init_flag: false,
     ws_url: "ws://" + window.location.host + "/ws/chat",
     websocket: null,

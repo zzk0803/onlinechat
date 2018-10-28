@@ -39,19 +39,32 @@
                 font-weight: bolder;
             }
 
-            #account-box *.field #login-btn {
-                display: block;
+            #account-box *.field div.btn-group {
+                width: 85%;
                 margin: 0 auto;
+            }
+
+            #account-box *.field button {
+                margin: 0 5px;
                 padding: 5px 35px;
                 border: none;
-                background-color: mediumaquamarine;
                 font-weight: bolder;
+            }
+
+            #account-box *.field button#register-btn {
+                float: left;
+                background-color: mediumaquamarine;
+            }
+
+            #account-box *.field button#login-btn {
+                float: right;
+                background-color: goldenrod;
             }
         </style>
     </head>
     <body>
         <div id="account-box">
-            <form action="account/signon" method="post">
+            <form action="account" method="post">
                 <div class="field">
                     <label for="username">用户名：</label>
                     <input type="text" id="username" name="username"/>
@@ -61,7 +74,10 @@
                     <input type="password" id="password" name="password"/>
                 </div>
                 <div class="field">
-                    <button id="login-btn" type="submit">登录</button>
+                    <div class="btn-group">
+                        <button id="register-btn" type="submit" name="account-action" value="signin">注册</button>
+                        <button id="login-btn" type="submit" name="account-action" value="signon">登录</button>
+                    </div>
                 </div>
             </form>
         </div>

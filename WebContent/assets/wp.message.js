@@ -1,4 +1,4 @@
-wp.message = {
+;wp.message = {
     init: function () {
 
     },
