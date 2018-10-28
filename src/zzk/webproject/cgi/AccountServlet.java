@@ -34,7 +34,6 @@ public class AccountServlet extends HttpServlet {
             case "signon":
                 if (accountService.login(username, password)) {
                     HttpSession httpSession = request.getSession(true);
-                    httpSession.setMaxInactiveInterval(60);
                     httpSession.setAttribute("id", httpSession.getId());
                     httpSession.setAttribute("username", username);
                     OnlineUserUtil.register(username, httpSession);
