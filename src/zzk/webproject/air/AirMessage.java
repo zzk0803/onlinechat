@@ -1,5 +1,9 @@
 package zzk.webproject.air;
 
+import zzk.webproject.util.SimpleJsonFormatter;
+
 public interface AirMessage {
-    String toJson();
+    default String toJson() {
+        return SimpleJsonFormatter.toJsonString(this);
+    }
 }

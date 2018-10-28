@@ -1,6 +1,6 @@
 package zzk.webproject.util;
 
-import zzk.webproject.air.AirEventMessage;
+import zzk.webproject.air.AirAccountEventMessage;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -51,10 +51,5 @@ public class SimpleJsonFormatter {
         }
         buildingJsonString.append("}");
         return buildingJsonString.toString();
-    }
-
-    public static void main(String[] args) {
-        AirEventMessage message = new AirEventMessage("online", "user");
-        System.out.println(toJsonString(message));
     }
 }

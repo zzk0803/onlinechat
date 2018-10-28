@@ -43,10 +43,12 @@ body {
 }
 
 #right-up-is-8 > ul#received > li {
+    font-family: "微软雅黑", serif;
+    font-size: 24px;
+    color: white;
     list-style: none;
     border-radius: 5px;
-    padding: 5px;
-    margin: 3px;
+    margin: 4px;
     clear: both;
 }
 
@@ -70,6 +72,11 @@ body {
     background-color: dimgray;
     border-radius: 20px;
     padding: 2px;
+}
+
+#right-up-is-8 > ul#received pre {
+    margin: 0;
+    padding: 3px;
 }
 
 #right-lower-is-2 {
