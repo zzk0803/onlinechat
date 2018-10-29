@@ -3,10 +3,10 @@ package zzk.webproject.service;
 public class AccountService {
     private AccountServiceImplementor accountService;
 
-    public AccountService() {
+    AccountService() {
     }
 
-    public AccountService(AccountServiceImplementor accountService) {
+    AccountService(AccountServiceImplementor accountService) {
         this.accountService = accountService;
     }
 
