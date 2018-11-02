@@ -1,6 +1,4 @@
-package zzk.webproject.air;
-
-import zzk.webproject.util.SimpleJsonFormatter;
+package zzk.webproject.air.entity;
 
 import java.util.Objects;
 

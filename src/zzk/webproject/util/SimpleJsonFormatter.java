@@ -1,7 +1,5 @@
 package zzk.webproject.util;
 
-import zzk.webproject.air.AirAccountEventMessage;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;

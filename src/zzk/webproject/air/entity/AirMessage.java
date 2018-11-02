@@ -1,4 +1,4 @@
-package zzk.webproject.air;
+package zzk.webproject.air.entity;
 
 import zzk.webproject.util.SimpleJsonFormatter;
 
