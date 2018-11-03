@@ -10,57 +10,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>登录</title>
-        <style>
-            body {
-                background-color: black;
-            }
-
-            #account-box {
-                width: 320px;
-                background-color: dodgerblue;
-                border: 1px solid white;
-                padding: 30px;
-                position: absolute;
-                left: 40%;
-                top: 42%;
-            }
-
-            #account-box *.field {
-                margin: 10px;
-                width: 80%;
-            }
-
-            #account-box *.field input {
-                width: 100%;
-                padding: 5px;
-            }
-
-            #account-box *.field label {
-                font-weight: bolder;
-            }
-
-            #account-box *.field div.btn-group {
-                width: 85%;
-                margin: 0 auto;
-            }
-
-            #account-box *.field button {
-                margin: 0 5px;
-                padding: 5px 35px;
-                border: none;
-                font-weight: bolder;
-            }
-
-            #account-box *.field button#register-btn {
-                float: left;
-                background-color: mediumaquamarine;
-            }
-
-            #account-box *.field button#login-btn {
-                float: right;
-                background-color: goldenrod;
-            }
-        </style>
+        <link rel="stylesheet" href="assets/account.css">
     </head>
     <body>
         <div id="account-box">
@@ -82,7 +32,4 @@
             </form>
         </div>
     </body>
-    <script>
-
-    </script>
 </html>
