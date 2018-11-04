@@ -4,9 +4,11 @@ import org.apache.tomcat.websocket.WsSession;
 import zzk.webproject.air.entity.AirAccountEventMessage;
 import zzk.webproject.air.entity.AirBroadcastMessage;
 import zzk.webproject.air.entity.AirP2PMessage;
+import zzk.webproject.air.entity.AirReferenceMessage;
 import zzk.webproject.util.OnlineUserUtil;
 import zzk.webproject.util.SimpleJsonFormatter;
 
+import javax.servlet.http.HttpSession;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
@@ -16,14 +18,11 @@ import java.util.logging.Logger;
 
 @ServerEndpoint(value = "/ws/chat")
 public class ChatEndpoint {
-    public static final int LASTED_MESSAGE_CAPACITY = 3;
-    private static final Deque<String> LASTED_MESSAGE = new ArrayDeque<>();
-    private static final List<ChatEndpoint> CHAT_ENDPOINTS = new LinkedList<>();
-    private Session session;
+    public static final int LASTED_MESSAGE_CAPACITY = 6;
+    private static final LinkedList<String> LASTED_MESSAGE = new LinkedList<>();
 
-    private String getUsername(Session session) {
-        return OnlineUserUtil.getUsername(((WsSession) session).getHttpSessionId());
-    }
+    private static final LinkedList<ChatEndpoint> CHAT_ENDPOINTS = new LinkedList<>();
+    private Session session;
 
     @OnOpen
     public void open(Session session) {
@@ -52,6 +51,20 @@ public class ChatEndpoint {
         end();
     }
 
+    public static void broadcastReferenceMessage(String author, String type, String uuid) {
+        AirReferenceMessage referenceMessage = new AirReferenceMessage(type, uuid);
+        CHAT_ENDPOINTS.stream()
+                .filter(endpoint -> OnlineUserUtil.getUsername(((WsSession) endpoint.session).getHttpSessionId()).equals(author))
+                .findFirst()
+                .ifPresent(endpoint -> endpoint.broadcast(referenceMessage, endpoint));
+    }
+
+    private String getUsername(Session session) {
+        return OnlineUserUtil.getUsername(
+                ((WsSession) session).getHttpSessionId()
+        );
+    }
+
     private void registerEndpoint(ChatEndpoint endpoint) {
         CHAT_ENDPOINTS.add(endpoint);
     }
@@ -66,9 +79,13 @@ public class ChatEndpoint {
     }
 
     private void broadcast(Object object) {
+        broadcast(object, this);
+    }
+
+    private void broadcast(Object object, ChatEndpoint exclude) {
         for (ChatEndpoint endpoint : CHAT_ENDPOINTS) {
             try {
-                if (this == endpoint) {
+                if (exclude == endpoint) {
                     continue;
                 }
                 endpoint.session.getBasicRemote().sendText(SimpleJsonFormatter.toJsonString(object));
@@ -79,7 +96,10 @@ public class ChatEndpoint {
     }
 
     private void recordMessage(String message) {
-        LASTED_MESSAGE.push(message);
+        if (LASTED_MESSAGE.size() > LASTED_MESSAGE_CAPACITY) {
+            LASTED_MESSAGE.removeLast();
+        }
+        LASTED_MESSAGE.addFirst(message);
     }
 
     private void transferUnacceptedMessage(Session session) {

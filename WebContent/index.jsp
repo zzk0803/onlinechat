@@ -46,4 +46,5 @@
     <script src="assets/wp.main.js" charset="UTF-8"></script>
     <script src="assets/wp.air.js" charset="UTF-8"></script>
     <script src="assets/wp.message.js" charset="UTF-8"></script>
+    <script src="assets/wp.ajax.js" charset="UTF-8"></script>
 </html>

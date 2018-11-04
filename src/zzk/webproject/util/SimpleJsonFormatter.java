@@ -3,6 +3,7 @@ package zzk.webproject.util;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class SimpleJsonFormatter {
     private static final List<Class<?>> allowedType = new ArrayList<>();
@@ -37,7 +38,12 @@ public class SimpleJsonFormatter {
                     buildingJsonString.append("\"");
                     buildingJsonString.append(":");
                     buildingJsonString.append("\"");
-                    buildingJsonString.append(currentField.get(object));
+                    Object value = currentField.get(object);
+                    if (Objects.nonNull(value)) {
+                        buildingJsonString.append(value);
+                    } else {
+                        buildingJsonString.append("null");
+                    }
                     buildingJsonString.append("\"");
                 }
                 if (index + 1 != declaredFields.length) {

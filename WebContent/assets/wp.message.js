@@ -2,6 +2,7 @@
     init: function () {
 
     },
+
     appendMyMessage: function (message) {
         let oMessageUl = document.getElementById("received");
         let emptyLiEle = document.createElement("li");
@@ -11,6 +12,7 @@
         oMessageUl.appendChild(mySendMessageLiEle);
         oMessageUl.appendChild(emptyLiEle);
     },
+
     appendReceivedMessage: function (message) {
         let messageObject = JSON.parse(message);
         let oMessageUl = document.getElementById("received");
@@ -18,7 +20,7 @@
         let myReceivedMessageLiEle = document.createElement("li");
         switch (messageObject.type) {
             case "event":
-                var typeCH = {
+                let typeCH = {
                     "online": "上线了",
                     "offline": "下线了"
                 };
@@ -35,6 +37,17 @@
                 oMessageUl.appendChild(emptyLiEle);
                 break;
 
+
+            case "reference":
+                console.log(messageObject);
+                wp.ajax.get(wp.main.constants.longtextUrl, {uuid: messageObject.uuid}, function (response) {
+                    myReceivedMessageLiEle.appendChild(wp.message.generatePreElement(response));
+                    myReceivedMessageLiEle.className = "others";
+                    oMessageUl.appendChild(myReceivedMessageLiEle);
+                    oMessageUl.appendChild(emptyLiEle);
+                });
+                break;
+
             default:
                 alert("出BUG了");
                 break;
@@ -45,5 +58,5 @@
         let preEle = document.createElement("pre");
         preEle.innerText = naturalMessage;
         return preEle;
-    }
+    },
 };

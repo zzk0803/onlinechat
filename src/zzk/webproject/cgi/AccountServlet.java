@@ -16,8 +16,6 @@ import java.util.logging.Logger;
 
 @WebServlet(name = "AccountServlet", urlPatterns = "/account")
 public class AccountServlet extends HttpServlet {
-    private static final Logger logger = Logger.getLogger(AccountServlet.class.getName());
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("username");
