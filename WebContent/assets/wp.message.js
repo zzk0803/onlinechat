@@ -39,7 +39,6 @@
 
 
             case "reference":
-                console.log(messageObject);
                 wp.ajax.get(wp.main.constants.longtextUrl, {uuid: messageObject.uuid}, function (response) {
                     myReceivedMessageLiEle.appendChild(wp.message.generatePreElement(response));
                     myReceivedMessageLiEle.className = "others";

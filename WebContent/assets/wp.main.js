@@ -19,7 +19,6 @@ wp.main = {
     },
     isShortText: function (message) {
         let stringLength = wp.main.checkStringLength(message);
-        console.log("message(" + message.substring(0, 5) + "...).size=" + stringLength.charCount);
         return stringLength.charCount < wp.main.constants.longtextLength;
     },
     checkStringLength: function (aString) {
@@ -53,8 +52,8 @@ wp.main = {
                     wp.main.constants.longtextUrl,
                     formData,
                     function (xml) {
-                        console.log(xml);
-                    });
+                    }
+                );
             }
             wp.message.appendMyMessage(message);
             oTextarea.value = "";

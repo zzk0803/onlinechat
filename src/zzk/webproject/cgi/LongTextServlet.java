@@ -32,7 +32,6 @@ public class LongTextServlet extends HttpServlet {
         LongTextResponseVO responseVO = new LongTextResponseVO();
         responseVO.setMethod("post");
         if (Objects.nonNull(username) && StringUtil.nonBlank(text)) {
-            System.out.println(text);
             ChatMessageService chatMessageService = Services.getChatMessageService();
             String uuid = chatMessageService.save(username, text);
             responseVO.setContent(uuid);
