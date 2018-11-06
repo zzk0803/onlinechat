@@ -14,8 +14,9 @@
 %>
 <html>
     <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="pragma" content="no-cache">
         <title>Home</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" href="assets/index.css">
     </head>
     <body>

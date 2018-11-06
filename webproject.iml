@@ -19,7 +19,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="lombok" level="project" />
     <orderEntry type="library" exported="" scope="PROVIDED" name="Tomcat 9.0.11" level="application_server_libraries" />
   </component>
 </module>
