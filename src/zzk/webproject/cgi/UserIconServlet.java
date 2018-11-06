@@ -22,7 +22,7 @@ public class UserIconServlet extends HttpServlet {
     private static final Random RANDOM_INSTANCE = new Random();
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         doGet(request, response);
     }
 
