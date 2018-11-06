@@ -18,10 +18,10 @@ import java.util.logging.Logger;
 
 @ServerEndpoint(value = "/ws/chat")
 public class ChatEndpoint {
-    public static final int LASTED_MESSAGE_CAPACITY = 6;
+    private static final int LASTED_MESSAGE_CAPACITY = 6;
     private static final LinkedList<String> LASTED_MESSAGE = new LinkedList<>();
-
     private static final LinkedList<ChatEndpoint> CHAT_ENDPOINTS = new LinkedList<>();
+
     private Session session;
 
     @OnOpen
@@ -30,6 +30,7 @@ public class ChatEndpoint {
         this.session = session;
         broadcast(new AirAccountEventMessage("event", "online", getUsername(session)));
         transferUnacceptedMessage(session);
+        transferOnlineFriend(session);
     }
 
     @OnClose
@@ -111,5 +112,21 @@ public class ChatEndpoint {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void transferOnlineFriend(Session session) {
+        RemoteEndpoint.Basic basicRemote = session.getBasicRemote();
+        for (ChatEndpoint endpoint : CHAT_ENDPOINTS) {
+            try {
+                Session currentSession = endpoint.session;
+                if (currentSession == session) {
+                    continue;
+                }
+                basicRemote.sendText(new AirAccountEventMessage("event", "online", getUsername(currentSession)).toJson());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 }

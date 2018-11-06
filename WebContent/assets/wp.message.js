@@ -21,13 +21,18 @@
         switch (messageObject.type) {
             case "event":
                 let typeCH = {
-                    "online": "上线了",
-                    "offline": "下线了"
+                    "online": "刚刚上线了",
+                    "offline": "刚刚下线了"
                 };
-                myReceivedMessageLiEle.innerHTML = messageObject.username + typeCH[messageObject.event];
+                myReceivedMessageLiEle.innerHTML = messageObject.username + " " + typeCH[messageObject.event];
                 myReceivedMessageLiEle.className = "apprise";
                 oMessageUl.appendChild(myReceivedMessageLiEle);
                 oMessageUl.appendChild(emptyLiEle);
+                if (messageObject.event === "online") {
+                    this.appendOnlineFriend(messageObject.username);
+                } else if (messageObject.event === "offline") {
+                    this.removeOfflineFriend(messageObject.username);
+                }
                 break;
 
             case "message":
@@ -50,6 +55,31 @@
             default:
                 alert("出BUG了");
                 break;
+        }
+    },
+
+    appendOnlineFriend: function (username) {
+        let rosterEle = document.getElementById("left-items");
+        let aFriend = document.createElement("li");
+        let friendIcon = document.createElement("img");
+        friendIcon.setAttribute("src", wp.main.constants.iconUrl + "?username=" + username);
+        friendIcon.setAttribute("alt", "usericon");
+        aFriend.appendChild(friendIcon);
+        let friendName = document.createElement("span");
+        friendName.innerHTML = username;
+        aFriend.appendChild(friendName);
+        rosterEle.appendChild(aFriend);
+    },
+
+    removeOfflineFriend: function (username) {
+        let liEleList = document.querySelector("#left-items").children;
+        for (let index = 0; index < liEleList.length; index++) {
+            let theFriendEle = liEleList[index];
+            let spanEle = theFriendEle.getElementsByTagName("span");
+            if (spanEle[0].innerHTML === username) {
+                theFriendEle.parentNode.removeChild(theFriendEle);
+                break;
+            }
         }
     },
 

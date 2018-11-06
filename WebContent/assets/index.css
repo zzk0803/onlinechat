@@ -139,9 +139,29 @@ body {
 
 ul#left-items {
     clear: both;
+    margin-left: -40px;
 }
 
 ul#left-items > li {
+    width: 100%;
     color: black;
     list-style-type: none;
+    margin: 10px 0;
+    padding: 0 5px;
+}
+
+ul#left-items > li > img {
+    float: left;
+    width: 45px;
+    height: 45px;
+    border: 1px solid white;
+    border-radius: 25px;
+}
+
+ul#left-items > li > span {
+    color: white;
+    display: inline-block;
+    line-height: 50px;
+    vertical-align: 25px;
+    margin: 0 10px;
 }

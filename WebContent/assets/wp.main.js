@@ -16,6 +16,7 @@ wp.main = {
     constants: {
         longtextLength: 200,
         longtextUrl: "http://" + window.location.host + "/longtext",
+        iconUrl:"http://" + window.location.host + "/usericon"
     },
     isShortText: function (message) {
         let stringLength = wp.main.checkStringLength(message);
