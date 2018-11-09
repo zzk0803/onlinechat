@@ -18,11 +18,11 @@
             <form action="account" method="post">
                 <div class="field">
                     <label for="username">用户名：</label>
-                    <input type="text" id="username" name="username"/>
+                    <input type="text" id="username" name="username" required/>
                 </div>
                 <div class="field">
                     <label for="password">密码：</label>
-                    <input type="password" id="password" name="password"/>
+                    <input type="password" id="password" name="password" required/>
                 </div>
                 <div class="field">
                     <div class="btn-group">

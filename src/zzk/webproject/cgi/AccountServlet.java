@@ -3,6 +3,7 @@ package zzk.webproject.cgi;
 import zzk.webproject.service.AccountService;
 import zzk.webproject.service.Services;
 import zzk.webproject.util.OnlineUserUtil;
+import zzk.webproject.util.StringUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,6 +23,12 @@ public class AccountServlet extends HttpServlet {
         String password = request.getParameter("password");
         String accountAction = request.getParameter("account-action");
         AccountService accountService = Services.getAccountServiceInstance();
+
+        //用户名和密码不能为空
+        if (StringUtil.isBlank(username) || StringUtil.isBlank(password)) {
+            response.sendRedirect(request.getContextPath() + "/account.jsp");
+        }
+
         switch (accountAction) {
             case "signin":
                 if (accountService.register(username, password)) {
