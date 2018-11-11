@@ -1,4 +1,4 @@
-package zzk.webproject.dao;
+package zzk.webproject.dao.db;
 
 import java.sql.*;
 import java.util.Objects;
