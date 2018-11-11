@@ -9,6 +9,9 @@ import javax.servlet.http.HttpSessionAttributeListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 import javax.servlet.http.HttpSessionBindingEvent;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @WebListener()
 public class ProjectListener implements ServletContextListener,
@@ -27,6 +30,10 @@ public class ProjectListener implements ServletContextListener,
          initialized(when the Web application is deployed). 
          You can initialize servlet context related data here.
       */
+        Logger globalLogger = Logger.getGlobal();
+        ConsoleHandler consoleHandler = new ConsoleHandler();
+        consoleHandler.setLevel(Level.INFO);
+        globalLogger.addHandler(consoleHandler);
     }
 
     @Override

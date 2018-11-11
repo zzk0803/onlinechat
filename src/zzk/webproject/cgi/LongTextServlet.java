@@ -17,10 +17,13 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @WebServlet(name = "LongTextServlet", urlPatterns = "/longtext")
 @MultipartConfig
 public class LongTextServlet extends HttpServlet {
+    public static final Logger logger = Logger.getLogger(LongTextServlet.class.getName());
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -37,6 +40,7 @@ public class LongTextServlet extends HttpServlet {
             responseVO.setContent(uuid);
             responseVO.setResult("success");
             ChatEndpoint.broadcastReferenceMessage(username, "reference", uuid);
+            logger.log(Level.INFO, String.format("用户%s发送了一条长文本，文本长度%d", username, text.length()));
         } else {
             responseVO.setResult("failed");
         }

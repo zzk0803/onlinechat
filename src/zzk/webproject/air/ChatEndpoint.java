@@ -18,6 +18,8 @@ import java.util.logging.Logger;
 
 @ServerEndpoint(value = "/ws/chat")
 public class ChatEndpoint {
+    public static final Logger logger = Logger.getLogger(ChatEndpoint.class.getName());
+
     private static final int LASTED_MESSAGE_CAPACITY = 6;
     private static final LinkedList<String> LASTED_MESSAGE = new LinkedList<>();
     private static final LinkedList<ChatEndpoint> CHAT_ENDPOINTS = new LinkedList<>();
@@ -28,28 +30,34 @@ public class ChatEndpoint {
     public void open(Session session) {
         registerEndpoint(this);
         this.session = session;
-        broadcast(new AirAccountEventMessage("event", "online", getUsername(session)));
+        String username = getUsername(session);
+        broadcast(new AirAccountEventMessage("event", "online", username));
         transferUnacceptedMessage(session);
         transferOnlineFriend(session);
+        logger.log(Level.INFO, String.format("用户%s连接到了websocket", username));
     }
 
     @OnClose
     public void end() {
-        broadcast(new AirAccountEventMessage("event", "offline", getUsername(session)));
+        String username = getUsername(session);
+        broadcast(new AirAccountEventMessage("event", "offline", username));
         unregisterEndpoint(this);
         session = null;
+        logger.log(Level.INFO, String.format("用户%s从websocket断开", username));
     }
 
     @OnMessage
     public void message(String message) {
         recordMessage(message);
         broadcast(message);
+        logger.log(Level.INFO, String.format("用户%s发送了一条短消息:%s", getUsername(this.session), message));
     }
 
     @OnError
     public void error(Throwable throwable) {
         throwable.printStackTrace();
         end();
+        logger.log(Level.SEVERE, throwable.getMessage());
     }
 
     public static void broadcastReferenceMessage(String author, String type, String uuid) {
@@ -91,7 +99,7 @@ public class ChatEndpoint {
                 }
                 endpoint.session.getBasicRemote().sendText(SimpleJsonFormatter.toJsonString(object));
             } catch (IOException e) {
-                Logger.getLogger(ChatEndpoint.class.getName()).log(Level.SEVERE, null, e);
+                logger.log(Level.SEVERE, e.getMessage());
             }
         }
     }
