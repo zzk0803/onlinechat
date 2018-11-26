@@ -44,6 +44,10 @@
             </div>
         </div>
     </body>
+    <script>
+        window.zzk_context_path = "<%=application.getContextPath()%>";
+        console.log(window.zzk_context_path);
+    </script>
     <script src="assets/wp.main.js" charset="UTF-8"></script>
     <script src="assets/wp.air.js" charset="UTF-8"></script>
     <script src="assets/wp.message.js" charset="UTF-8"></script>

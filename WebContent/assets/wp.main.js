@@ -15,8 +15,8 @@ window.onload = function () {
 wp.main = {
     constants: {
         longtextLength: 200,
-        longtextUrl: "http://" + window.location.host + "/longtext",
-        iconUrl:"http://" + window.location.host + "/usericon"
+        longtextUrl: "http://" + window.location.host + window.zzk_context_path + "/longtext",
+        iconUrl: "http://" + window.location.host + window.zzk_context_path + "/usericon"
     },
     isShortText: function (message) {
         let stringLength = wp.main.checkStringLength(message);
@@ -29,15 +29,14 @@ wp.main = {
             let c = aString.charCodeAt(i);
             if ((c >= 0x0001 && c <= 0x007e) || (0xff60 <= c && c <= 0xff9f)) {
                 byteCount++;
-            }
-            else {
+            } else {
                 byteCount += 2;
             }
             charCount++;
         }
         return {"byteCount": byteCount, "charCount": charCount};
     },
-    init: function () {
+    bind_sendBtn: function () {
         //绑定发送按钮事件
         let oSendBtn = document.getElementById("send");
         oSendBtn.onclick = function (event) {
@@ -45,7 +44,11 @@ wp.main = {
             let message = oTextarea.value;
             // 判断是否是短文本，是的话直接使用websocket推送，否则通过servlet提交
             if (wp.main.isShortText(message)) {
-                wp.air.send(message);
+                wp.air.send(
+                    JSON.stringify(
+                        wp.message.shortMessage(message)
+                    )
+                );
             } else {
                 let formData = new FormData();
                 formData.append("text", message);
@@ -53,6 +56,13 @@ wp.main = {
                     wp.main.constants.longtextUrl,
                     formData,
                     function (xml) {
+                        let response = JSON.parse(xml);
+                        let message = wp.message.referenceMessage(response.content);
+                        wp.air.send(
+                            JSON.stringify(
+                                message
+                            )
+                        )
                     }
                 );
             }
@@ -60,5 +70,8 @@ wp.main = {
             oTextarea.value = "";
             event.stopPropagation();
         }
+    },
+    init: function () {
+        this.bind_sendBtn();
     }
 };

@@ -1,64 +1,93 @@
 ;wp.message = {
-    init: function () {
+    messageType: {
+        short_message: "SHORT_MESSAGE",
+        reference_message: "REFERENCE",
+        system_message: "SYSTEM_MESSAGE"
+    },
 
+    airmessage: {
+        type: "SHORT_MESSAGE",
+        content: "",
+        broadcastMessage: "true",
+        fromAccount: "",
+        toAccount: ""
+    },
+
+    init: function () {
+    },
+
+    shortMessage(content) {
+        let message = {};
+        message.type = this.airmessage.type;
+        message.content = content;
+        message.broadcastMessage = this.airmessage.broadcastMessage;
+        message.fromAccount = this.airmessage.fromAccount;
+        message.toAccount = this.airmessage.toAccount;
+        return message;
+    },
+
+    referenceMessage(uuid) {
+        let message = {};
+        message.type = this.messageType.reference_message;
+        message.content = uuid;
+        message.broadcastMessage = this.airmessage.broadcastMessage;
+        message.fromAccount = this.airmessage.fromAccount;
+        message.toAccount = this.airmessage.toAccount;
+        return message;
     },
 
     appendMyMessage: function (message) {
         let oMessageUl = document.getElementById("received");
         let emptyLiEle = document.createElement("li");
         let mySendMessageLiEle = document.createElement("li");
-        mySendMessageLiEle.appendChild(this.generatePreElement(message));
+        mySendMessageLiEle.appendChild(this._wrapWithPreElement(message));
         mySendMessageLiEle.className = "me";
         oMessageUl.appendChild(mySendMessageLiEle);
         oMessageUl.appendChild(emptyLiEle);
     },
 
-    appendReceivedMessage: function (message) {
-        let messageObject = JSON.parse(message);
+    appendAccountEventMessage(account_event, target_account) {
         let oMessageUl = document.getElementById("received");
         let emptyLiEle = document.createElement("li");
         let myReceivedMessageLiEle = document.createElement("li");
-        switch (messageObject.type) {
-            case "event":
-                let typeCH = {
-                    "online": "刚刚上线了",
-                    "offline": "刚刚下线了"
-                };
-                myReceivedMessageLiEle.innerHTML = messageObject.username + " " + typeCH[messageObject.event];
-                myReceivedMessageLiEle.className = "apprise";
-                oMessageUl.appendChild(myReceivedMessageLiEle);
-                oMessageUl.appendChild(emptyLiEle);
-                if (messageObject.event === "online") {
-                    this.appendOnlineFriend(messageObject.username);
-                } else if (messageObject.event === "offline") {
-                    this.removeOfflineFriend(messageObject.username);
-                }
-                break;
-
-            case "message":
-                myReceivedMessageLiEle.appendChild(this.generatePreElement(messageObject.message));
-                myReceivedMessageLiEle.className = "others";
-                oMessageUl.appendChild(myReceivedMessageLiEle);
-                oMessageUl.appendChild(emptyLiEle);
-                break;
-
-
-            case "reference":
-                wp.ajax.get(wp.main.constants.longtextUrl, {uuid: messageObject.uuid}, function (response) {
-                    myReceivedMessageLiEle.appendChild(wp.message.generatePreElement(response));
-                    myReceivedMessageLiEle.className = "others";
-                    oMessageUl.appendChild(myReceivedMessageLiEle);
-                    oMessageUl.appendChild(emptyLiEle);
-                });
-                break;
-
-            default:
-                alert("出BUG了");
-                break;
+        let typeCH = {
+            "online": "刚刚上线了",
+            "offline": "刚刚下线了"
+        };
+        myReceivedMessageLiEle.innerHTML = target_account + " " + typeCH[account_event];
+        myReceivedMessageLiEle.className = "apprise";
+        oMessageUl.appendChild(myReceivedMessageLiEle);
+        oMessageUl.appendChild(emptyLiEle);
+        if (account_event === "online") {
+            this._appendOnlineFriend(target_account);
+        } else if (account_event === "offline") {
+            this._removeOfflineFriend(target_account);
         }
     },
 
-    appendOnlineFriend: function (username) {
+    appendReferenceMessage(uuid, fromAccount) {
+        let oMessageUl = document.getElementById("received");
+        let emptyLiEle = document.createElement("li");
+        let myReceivedMessageLiEle = document.createElement("li");
+        wp.ajax.get(wp.main.constants.longtextUrl, {uuid: uuid}, function (response) {
+            myReceivedMessageLiEle.appendChild(wp.message._wrapWithPreElement(response));
+            myReceivedMessageLiEle.className = "others";
+            oMessageUl.appendChild(myReceivedMessageLiEle);
+            oMessageUl.appendChild(emptyLiEle);
+        });
+    },
+
+    appendReceivedMessage: function (content, fromAccount) {
+        let oMessageUl = document.getElementById("received");
+        let emptyLiEle = document.createElement("li");
+        let myReceivedMessageLiEle = document.createElement("li");
+        myReceivedMessageLiEle.appendChild(this._wrapWithPreElement(content));
+        myReceivedMessageLiEle.className = "others";
+        oMessageUl.appendChild(myReceivedMessageLiEle);
+        oMessageUl.appendChild(emptyLiEle);
+    },
+
+    _appendOnlineFriend: function (username) {
         let rosterEle = document.getElementById("left-items");
         let aFriend = document.createElement("li");
         let friendIcon = document.createElement("img");
@@ -71,7 +100,7 @@
         rosterEle.appendChild(aFriend);
     },
 
-    removeOfflineFriend: function (username) {
+    _removeOfflineFriend: function (username) {
         let liEleList = document.querySelector("#left-items").children;
         for (let index = 0; index < liEleList.length; index++) {
             let theFriendEle = liEleList[index];
@@ -83,9 +112,9 @@
         }
     },
 
-    generatePreElement: function (naturalMessage) {
+    _wrapWithPreElement: function (content) {
         let preEle = document.createElement("pre");
-        preEle.innerText = naturalMessage;
+        preEle.innerText = content;
         return preEle;
     },
 };

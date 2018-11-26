@@ -1,6 +1,8 @@
 package zzk.webproject.cgi;
 
+import zzk.webproject.air.AirMessage;
 import zzk.webproject.air.ChatEndpoint;
+import zzk.webproject.air.MessageType;
 import zzk.webproject.cgi.vo.LongTextResponseVO;
 import zzk.webproject.service.ChatMessageService;
 import zzk.webproject.service.Services;
@@ -39,8 +41,7 @@ public class LongTextServlet extends HttpServlet {
             String uuid = chatMessageService.save(username, text);
             responseVO.setContent(uuid);
             responseVO.setResult("success");
-            ChatEndpoint.broadcastReferenceMessage(username, "reference", uuid);
-            logger.log(Level.INFO, String.format("用户%s发送了一条长文本，文本长度%d", username, text.length()));
+            logger.log(Level.INFO, String.format("用户%s通过servlet提交了一条长文本，文本长度%d", username, text.length()));
         } else {
             responseVO.setResult("failed");
         }
