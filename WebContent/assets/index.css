@@ -81,7 +81,7 @@ body {
 #right-up-is-8 > ul#received pre {
     display: block;
     max-width: 100%;
-    white-space: pre-line;
+    white-space: pre-wrap;
     word-wrap: break-word;
     word-break: break-all;
     margin: 0;
