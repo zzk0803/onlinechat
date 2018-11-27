@@ -5,15 +5,14 @@
  */
 package zzk.webproject.service;
 
+import zzk.webproject.dao.db.Persistents;
+import zzk.webproject.pojo.Account;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
-import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import zzk.webproject.dao.db.Persistents;
-import zzk.webproject.pojo.Account;
-import zzk.webproject.util.OnlineUserUtil;
 
 public class DatabaseAccountServiceImplementor extends AccountServiceImplementor {
 
@@ -24,13 +23,13 @@ public class DatabaseAccountServiceImplementor extends AccountServiceImplementor
 
     @Override
     public boolean login(String username, String password) {
-        Account account = Persistents.doQuery("select username,password from tb_account where username=? and password=?", (ResultSet t) -> {
+        Account account = Persistents.doQuery("select username,password from tb_account where username=? and password=?", (ResultSet resultSet) -> {
             Account current = null;
             try {
-                while (t.next()) {
+                while (resultSet.next()) {
                     current = new Account();
-                    String username1 = t.getString("username");
-                    String password1 = t.getString("password");
+                    String username1 = resultSet.getString("username");
+                    String password1 = resultSet.getString("password");
                     current.setUsername(username1);
                     current.setPassword(password1);
                 }

@@ -1,6 +1,8 @@
 package zzk.webproject.air;
 
 import org.apache.tomcat.websocket.WsSession;
+import zzk.webproject.service.ChatMessageService;
+import zzk.webproject.service.Services;
 import zzk.webproject.util.OnlineUserUtil;
 
 import javax.websocket.*;
@@ -12,12 +14,11 @@ import java.util.logging.Logger;
 
 @ServerEndpoint(value = "/ws/chat", encoders = {AirMessageEncoder.class}, decoders = {AirMessageDecoder.class})
 public class ChatEndpoint {
-    public static final Logger logger = Logger.getLogger(ChatEndpoint.class.getName());
+    public static final Logger LOGGER = Logger.getLogger(ChatEndpoint.class.getName());
 
-    private static final int LASTED_MESSAGE_CAPACITY = 6;
-    private static final LinkedList<AirMessage> LASTED_MESSAGE = new LinkedList<>();
+    private static ChatMessageService chatMessageService = Services.getChatMessageService();
+
     private static final LinkedList<ChatEndpoint> CHAT_ENDPOINTS = new LinkedList<>();
-
     private Session session;
 
     @OnOpen
@@ -31,11 +32,12 @@ public class ChatEndpoint {
         message.setContent("online");
         message.setFromAccount(username);
         broadcast(message);
+        recordMessage(message);
 
         transferUnacceptedMessage(session);
         transferOnlineFriend(session);
 
-        logger.log(Level.INFO, String.format("用户%s连接到了websocket", username));
+        LOGGER.log(Level.INFO, String.format("用户%s连接到了websocket", username));
     }
 
     @OnClose
@@ -46,10 +48,11 @@ public class ChatEndpoint {
         message.setContent("offline");
         message.setFromAccount(username);
         broadcast(message);
+        recordMessage(message);
 
         unregisterEndpoint(this);
         session = null;
-        logger.log(Level.INFO, String.format("用户%s从websocket断开", username));
+        LOGGER.log(Level.INFO, String.format("用户%s从websocket断开", username));
     }
 
     @OnMessage
@@ -57,14 +60,14 @@ public class ChatEndpoint {
         airMessage.setFromAccount(getUsername(this.session));
         recordMessage(airMessage);
         broadcast(airMessage);
-        logger.log(Level.INFO, airMessage.toString());
+        LOGGER.log(Level.INFO, airMessage.toString());
     }
 
     @OnError
     public void error(Throwable throwable) {
         throwable.printStackTrace();
         end();
-        logger.log(Level.SEVERE, throwable.getMessage());
+        LOGGER.log(Level.SEVERE, throwable.getMessage());
     }
 
     /**
@@ -120,7 +123,7 @@ public class ChatEndpoint {
                 }
                 endpoint.session.getBasicRemote().sendObject(object);
             } catch (IOException | EncodeException e) {
-                logger.log(Level.SEVERE, e.getMessage());
+                LOGGER.log(Level.SEVERE, e.getMessage());
             }
         }
     }
@@ -132,10 +135,7 @@ public class ChatEndpoint {
      * @param message
      */
     private void recordMessage(AirMessage message) {
-        if (LASTED_MESSAGE.size() > LASTED_MESSAGE_CAPACITY) {
-            LASTED_MESSAGE.removeFirst();
-        }
-        LASTED_MESSAGE.addLast(message);
+        chatMessageService.save(message);
     }
 
     /**
@@ -145,15 +145,15 @@ public class ChatEndpoint {
      */
     private void transferUnacceptedMessage(Session session) {
         RemoteEndpoint.Basic basicRemote = session.getBasicRemote();
-        LASTED_MESSAGE.stream()
-                .filter(airMessage -> MessageType.SHORT_MESSAGE.name().equals(airMessage.getType()))
-                .forEach(airMessage -> {
-                    try {
-                        basicRemote.sendObject(airMessage);
-                    } catch (IOException | EncodeException e) {
-                        e.printStackTrace();
-                    }
-                });
+        chatMessageService.list(airMessage -> MessageType.SHORT_MESSAGE.name().equals(airMessage.getType())
+                && MessageType.REFERENCE.name().equals(airMessage.getType())
+        ).forEach(airMessage -> {
+            try {
+                basicRemote.sendObject(airMessage);
+            } catch (IOException | EncodeException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     /**
@@ -171,10 +171,10 @@ public class ChatEndpoint {
                 }
                 AirMessage airMessage = new AirMessage("online");
                 airMessage.setType(MessageType.SYSTEM_MESSAGE);
-                airMessage.setFromAccount(getUsername(session));
+                airMessage.setFromAccount(getUsername(currentSession));
                 basicRemote.sendObject(airMessage);
             } catch (EncodeException | IOException e) {
-                logger.severe(e.getMessage());
+                LOGGER.severe(e.getMessage());
             }
         }
 

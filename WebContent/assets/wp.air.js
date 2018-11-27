@@ -1,6 +1,6 @@
 ;wp.air = {
     init_flag: false,
-    ws_url: "ws://" + window.location.host + window.zzk_context_path + "/ws/chat",
+    ws_url: "ws://" + window.location.host + window.wp_context_path + "/ws/chat",
     websocket: null,
     init: function () {
         this.websocket = new WebSocket(this.ws_url);

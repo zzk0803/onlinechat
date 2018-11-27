@@ -28,6 +28,8 @@ import java.util.logging.Logger;
 public class LongTextServlet extends HttpServlet {
     public static final Logger logger = Logger.getLogger(LongTextServlet.class.getName());
 
+    private ChatMessageService chatMessageService;
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String text = request.getParameter("text");
@@ -38,11 +40,10 @@ public class LongTextServlet extends HttpServlet {
         LongTextResponseVO responseVO = new LongTextResponseVO();
         responseVO.setMethod("post");
         if (Objects.nonNull(username) && StringUtil.nonBlank(text)) {
-            ChatMessageService chatMessageService = Services.getChatMessageService();
-            AirMessage message=new AirMessage(UUID.randomUUID().toString());
-            message.setType(MessageType.REFERENCE);
-            int id = chatMessageService.save(message);
-            responseVO.setContent(message.getContent());
+            chatMessageService = Services.getChatMessageService();
+            String uuid = UUID.randomUUID().toString();
+            chatMessageService.mapLongText(uuid, text);
+            responseVO.setContent(uuid);
             responseVO.setResult("success");
             logger.log(Level.INFO, String.format("用户%s通过servlet提交了一条长文本，文本长度%d", username, text.length()));
         } else {
@@ -62,14 +63,7 @@ public class LongTextServlet extends HttpServlet {
         String message = "";
         ChatMessageService chatMessageService = Services.getChatMessageService();
         if (StringUtil.nonBlank(uuid)) {
-            chatMessageService.list(new Predicate<AirMessage>() {
-                @Override
-                public boolean test(AirMessage message) {
-                    return message.getType().equalsIgnoreCase(MessageType.REFERENCE.name())
-                            &&
-                            message.getContent().equals(uuid);
-                }
-            });
+            message = chatMessageService.getLongText(uuid);
         }
         response.setContentType("text/plain");
         PrintWriter writer = response.getWriter();

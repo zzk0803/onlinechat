@@ -1,47 +1,56 @@
 package zzk.webproject.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import zzk.webproject.air.AirMessage;
+
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import zzk.webproject.air.AirMessage;
-import zzk.webproject.air.MessageType;
 
 public class MemoryChatMessageImplementor extends ChatMessageServiceImplementor {
-    private static final List<AirMessage> MESSAGE=new ArrayList<>();
+    public static final int MESSAGE_MAXIMUM = 32;
+    private static final LinkedList<AirMessage> MESSAGES = new LinkedList<>();
+    public static final Map<String, String> LONGTEXT = new HashMap<>();
 
     @Override
-    public int save(AirMessage message) {
-        MESSAGE.add(message);
-        return MESSAGE.indexOf(message);
+    public void save(AirMessage message) {
+        MESSAGES.offerFirst(message);
+        if (MESSAGES.size() > MESSAGE_MAXIMUM) {
+            MESSAGES.removeFirst();
+        }
     }
 
     @Override
-    public boolean isExist(int messageId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void mapLongText(String referenceUUID, String longText) {
+        LONGTEXT.put(referenceUUID, longText);
+    }
+
+    @Override
+    public String getLongText(String referenceUUID) {
+        return LONGTEXT.get(referenceUUID);
     }
 
     @Override
     public boolean isExist(String referenceUUID) {
-        return MESSAGE.stream()
-                .filter(message->MessageType.REFERENCE.name().equalsIgnoreCase(message.getType()))
-                .filter(message->referenceUUID.equals(message.getContent()))
-                .count()>0;
+        for (AirMessage message : MESSAGES) {
+            if (referenceUUID.equals(message.getContent())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
-    public AirMessage get(int messageId) {
-        return MESSAGE.get(messageId);
+    public AirMessage get(String referenceUUID) {
+        for (AirMessage message : MESSAGES) {
+            if (referenceUUID.equals(message.getContent())) {
+                return message;
+            }
+        }
+        return null;
     }
 
     @Override
-    public List<AirMessage> list(Predicate<AirMessage> messageFliter) {
-        List<AirMessage> messages=MESSAGE.stream()
-                .filter(messageFliter)
-                .collect(Collectors.toList());
-        return messages;
+    public List<AirMessage> list(Predicate<AirMessage> airMessagePredicate) {
+        return MESSAGES.stream().filter(airMessagePredicate).collect(Collectors.toList());
     }
-
 }

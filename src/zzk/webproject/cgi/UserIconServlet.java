@@ -3,7 +3,6 @@ package zzk.webproject.cgi;
 import zzk.webproject.util.OnlineUserUtil;
 
 import javax.imageio.ImageIO;
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;

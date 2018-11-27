@@ -50,11 +50,7 @@
         let oMessageUl = document.getElementById("received");
         let emptyLiEle = document.createElement("li");
         let myReceivedMessageLiEle = document.createElement("li");
-        let typeCH = {
-            "online": "刚刚上线了",
-            "offline": "刚刚下线了"
-        };
-        myReceivedMessageLiEle.innerHTML = target_account + " " + typeCH[account_event];
+        myReceivedMessageLiEle.innerHTML = target_account + "<<<>>>" + account_event;
         myReceivedMessageLiEle.className = "apprise";
         oMessageUl.appendChild(myReceivedMessageLiEle);
         oMessageUl.appendChild(emptyLiEle);

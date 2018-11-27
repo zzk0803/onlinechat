@@ -6,13 +6,15 @@ import zzk.webproject.air.AirMessage;
 
 public abstract class ChatMessageServiceImplementor {
 
-    public abstract int save(AirMessage message);
+    public abstract void save(AirMessage message);
 
-    public abstract boolean isExist(int messageId);
-    
+    public abstract void mapLongText(String referenceUUID, String longText);
+
     public abstract boolean isExist(String referenceUUID);
 
-    public abstract AirMessage get(int messageId);
+    public abstract AirMessage get(String referenceUUID);
 
-    public abstract List<AirMessage> list(Predicate<AirMessage> messageFliter);
+    public abstract List<AirMessage> list(Predicate<AirMessage> airMessagePredicate);
+
+    public abstract String getLongText(String referenceUUID);
 }

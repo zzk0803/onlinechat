@@ -15,8 +15,8 @@ window.onload = function () {
 wp.main = {
     constants: {
         longtextLength: 200,
-        longtextUrl: "http://" + window.location.host + window.zzk_context_path + "/longtext",
-        iconUrl: "http://" + window.location.host + window.zzk_context_path + "/usericon"
+        longtextUrl: "http://" + window.location.host + window.wp_context_path + "/longtext",
+        iconUrl: "http://" + window.location.host + window.wp_context_path + "/usericon"
     },
     isShortText: function (message) {
         let stringLength = wp.main.checkStringLength(message);
