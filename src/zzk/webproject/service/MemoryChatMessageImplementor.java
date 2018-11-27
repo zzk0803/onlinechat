@@ -1,27 +1,31 @@
 package zzk.webproject.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+import zzk.webproject.air.AirMessage;
 
 public class MemoryChatMessageImplementor extends ChatMessageServiceImplementor {
-    public static final Map<String, String> UUID_MESSAGE_MAP = new HashMap<>();
 
     @Override
-    public void save(String uuid, String author, String message) {
-        mapMessageWithUUID(uuid, message);
-    }
-
-    private void mapMessageWithUUID(String uuid, String message) {
-        UUID_MESSAGE_MAP.put(uuid, message);
+    public int save(AirMessage message) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public boolean isExist(String uuid) {
-        return UUID_MESSAGE_MAP.containsKey(uuid);
+    public boolean isExist(int messageId) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public String get(String uuid) {
-        return UUID_MESSAGE_MAP.get(uuid);
+    public AirMessage get(int messageId) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public List<AirMessage> list(Predicate<AirMessage> messageFliter) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
 }

@@ -1,9 +1,11 @@
 package zzk.webproject.service;
 
-public class Services {
-    private static final AccountService ACCOUNT_SERVICE_INSTANCE = new AccountService(new MemoryAccountServiceImplementor());
+import sun.security.pkcs11.Secmod;
 
-    private static final ChatMessageService CHAT_MESSAGE_SERVICE = new ChatMessageService(new MemoryChatMessageImplementor());
+public class Services {
+    private static final AccountService ACCOUNT_SERVICE_INSTANCE = new AccountService(new DatabaseAccountServiceImplementor());
+
+    private static final ChatMessageService CHAT_MESSAGE_SERVICE = new ChatMessageService();
 
     public static AccountService getAccountServiceInstance() {
         return ACCOUNT_SERVICE_INSTANCE;

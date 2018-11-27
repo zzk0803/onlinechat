@@ -1,6 +1,9 @@
 package zzk.webproject.service;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.function.Predicate;
+import zzk.webproject.air.AirMessage;
 
 public class ChatMessageService {
     private ChatMessageServiceImplementor chatMessageServiceImplementor;
@@ -20,17 +23,19 @@ public class ChatMessageService {
         this.chatMessageServiceImplementor = chatMessageServiceImplementor;
     }
 
-    public String save(String author, String message) {
-        String uuid = UUID.randomUUID().toString();
-        chatMessageServiceImplementor.save(uuid, author, message);
-        return uuid;
+    public int save(AirMessage message) {
+        return chatMessageServiceImplementor.save(message);
     }
 
-    public boolean isExist(String uuid) {
-        return chatMessageServiceImplementor.isExist(uuid);
+    public boolean isExist(int id) {
+        return chatMessageServiceImplementor.isExist(id);
     }
 
-    public String getMessage(String uuid) {
-        return chatMessageServiceImplementor.get(uuid);
+    public AirMessage getMessage(int id) {
+        return chatMessageServiceImplementor.get(id);
+    }
+    
+    public List<AirMessage> list(Predicate<AirMessage> messageFliter){
+        return chatMessageServiceImplementor.list(messageFliter);
     }
 }
