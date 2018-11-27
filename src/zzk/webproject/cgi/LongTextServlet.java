@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,8 +39,10 @@ public class LongTextServlet extends HttpServlet {
         responseVO.setMethod("post");
         if (Objects.nonNull(username) && StringUtil.nonBlank(text)) {
             ChatMessageService chatMessageService = Services.getChatMessageService();
-            String uuid = chatMessageService.save(username, text);
-            responseVO.setContent(uuid);
+            AirMessage message=new AirMessage(UUID.randomUUID().toString());
+            message.setType(MessageType.REFERENCE);
+            int id = chatMessageService.save(message);
+            responseVO.setContent(message.getContent());
             responseVO.setResult("success");
             logger.log(Level.INFO, String.format("用户%s通过servlet提交了一条长文本，文本长度%d", username, text.length()));
         } else {
@@ -58,11 +61,15 @@ public class LongTextServlet extends HttpServlet {
         String uuid = request.getParameter("uuid");
         String message = "";
         ChatMessageService chatMessageService = Services.getChatMessageService();
-        if (StringUtil.nonBlank(uuid)
-                &&
-                chatMessageService.isExist(uuid)
-        ) {
-            message = chatMessageService.getMessage(uuid);
+        if (StringUtil.nonBlank(uuid)) {
+            chatMessageService.list(new Predicate<AirMessage>() {
+                @Override
+                public boolean test(AirMessage message) {
+                    return message.getType().equalsIgnoreCase(MessageType.REFERENCE.name())
+                            &&
+                            message.getContent().equals(uuid);
+                }
+            });
         }
         response.setContentType("text/plain");
         PrintWriter writer = response.getWriter();
