@@ -18,12 +18,52 @@
         applyMessageLi: function (messageLiElement) {
             document.getElementById("received").appendChild(messageLiElement);
         },
+
+        updateAndShowUnreadBadge: function (username) {
+            let accountLiElements = document.querySelector("#online-accounts").children;
+            for (let index = 0; index < accountLiElements.length; index++) {
+                let current = accountLiElements[index];
+                let spanEle = current.getElementsByTagName("span")[0];
+                if (spanEle.innerHTML === username) {
+                    let unreadBadge = current.getElementsByTagName("p")[0];
+                    if (unreadBadge) {
+                        unreadBadge.innerHTML = this.unreadCount;
+                        unreadBadge.className = "";
+                        unreadBadge.classList.add("unread");
+                    } else {
+                        let unreadBadge = document.createElement("p");
+                        unreadBadge.innerHTML = this.unreadCount;
+                        unreadBadge.classList.add("unread");
+                        current.append(unreadBadge);
+                    }
+                }
+            }
+        },
+
+        hideUnreadBadge: function () {
+            let accountLiElements = document.querySelector("#online-accounts").children;
+            for (let index = 0; index < accountLiElements.length; index++) {
+                let current = accountLiElements[index];
+                let spanEle = current.getElementsByTagName("span")[0];
+                if (spanEle.innerHTML === this.name) {
+                    let unreadBadge = current.getElementsByTagName("p")[0];
+                    if (unreadBadge) {
+                        unreadBadge.className = "";
+                        unreadBadge.classList.add("hide");
+                        unreadBadge.classList.add("unread");
+                    }
+                }
+            }
+        },
+
         receiveMessageLi: function (messageLiElement) {
             this.appendMessageLi(messageLiElement);
+            let sourceAccount = messageLiElement.getAttribute("source");
+
             let currentIsDefault = wp.message.getCurrentMessageBox().name === wp.message.getDefaultMessageBox().name;
             let itIsBroadcastMessage = window.bool_dict[messageLiElement.getAttribute("broadcast")];
             let itIsMyMessage = !messageLiElement.hasAttribute("source");
-            let messageAuthorIsCurrentName = messageLiElement.getAttribute("source") === wp.message.getCurrentMessageBox().name;
+            let messageAuthorIsCurrentName = sourceAccount === wp.message.getCurrentMessageBox().name;
             if (currentIsDefault && itIsMyMessage) {
                 this.applyMessageLi(messageLiElement);
             } else if (currentIsDefault && itIsBroadcastMessage) {
@@ -32,11 +72,13 @@
                 this.applyMessageLi(messageLiElement);
             } else {
                 this.unreadCount += 1;
+                this.updateAndShowUnreadBadge(sourceAccount);
             }
         },
         applyMessageBox: function () {
             console.log(this.name + "-message-box-apply");
             this.unreadCount = 0;
+            this.hideUnreadBadge();
             this.clearReceiveChildren();
             this.messageLiElements.forEach(function (li) {
                 document.getElementById("received").appendChild(li);
@@ -158,11 +200,15 @@ wp.message.appendSystemMessage = function (message, fromAccount) {
 wp.message.putInCorrectMessageBox = function (fromAccount, isBroadcast, messageLiElement) {
     let emptyLiEle = document.createElement("li");
     if (window.bool_dict[isBroadcast]) {
-        wp.message.getDefaultMessageBox().receiveMessageLi(messageLiElement);
-        wp.message.getDefaultMessageBox().receiveMessageLi(emptyLiEle);
+        let messageBox = wp.message.getDefaultMessageBox();
+        messageBox.receiveMessageLi(messageLiElement);
+        messageBox.receiveMessageLi(emptyLiEle);
     } else {
-        wp.message.getMessageBoxByAccount(fromAccount).receiveMessageLi(messageLiElement);
-        wp.message.getMessageBoxByAccount(fromAccount).receiveMessageLi(emptyLiEle);
+        let messageBox = wp.message.getMessageBoxByAccount(fromAccount);
+        if (messageBox) {
+            messageBox.receiveMessageLi(messageLiElement);
+            messageBox.receiveMessageLi(emptyLiEle);
+        }
     }
 };
 
@@ -188,7 +234,7 @@ wp.message.appendReceivedMessage = function (content, fromAccount, isBroadcast) 
 
 wp.message.addOnlineAccount = function (username) {
 
-    let accountLiParents = document.getElementById("left-items");
+    let accountLiParents = document.getElementById("online-accounts");
     let accountLi = document.createElement("li");
     let accountLiIcon = document.createElement("img");
     accountLiIcon.setAttribute("src", wp.main.constants.iconUrl + "?username=" + username);
@@ -214,7 +260,7 @@ wp.message.addOnlineAccount = function (username) {
 };
 
 wp.message.delOfflineAccount = function (username) {
-    let accountLiElements = document.querySelector("#left-items").children;
+    let accountLiElements = document.querySelector("#online-accounts").children;
     for (let index = 0; index < accountLiElements.length; index++) {
         let current = accountLiElements[index];
         let spanEle = current.getElementsByTagName("span");

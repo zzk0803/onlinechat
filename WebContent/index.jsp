@@ -22,7 +22,7 @@
     <body>
         <div id="centered-box">
             <div id="left-full-height">
-                <ul id="left-items">
+                <ul id="online-accounts">
                 </ul>
             </div>
             <div id="right-full-height">

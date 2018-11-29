@@ -11,8 +11,6 @@ wp.main.constants = {
     iconUrl: "http://" + window.location.host + window.wp_context_path + "/usericon"
 };
 
-wp.main.onlineAccountAndElements = {};
-
 wp.main.isShortText = function (message) {
     let stringLength = wp.main.checkStringLength(message);
     return stringLength.charCount < wp.main.constants.longtextLength;
