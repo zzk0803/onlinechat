@@ -13,7 +13,7 @@ public class MemoryChatMessageImplementor extends ChatMessageServiceImplementor 
 
     @Override
     public void save(AirMessage message) {
-        MESSAGES.offerFirst(message);
+        MESSAGES.offerLast(message);
         if (MESSAGES.size() > MESSAGE_MAXIMUM) {
             MESSAGES.removeFirst();
         }

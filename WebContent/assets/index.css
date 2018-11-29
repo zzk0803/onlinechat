@@ -150,6 +150,14 @@ ul#left-items > li {
     padding: 0 5px;
 }
 
+ul#left-items > li:hover, ul#left-items > li > img:hover, ul#left-items > li > span:hover {
+    cursor: pointer;
+}
+
+ul#left-items > li.select {
+    background-color: #1E63C7;
+}
+
 ul#left-items > li > img {
     float: left;
     width: 45px;
@@ -165,3 +173,19 @@ ul#left-items > li > span {
     vertical-align: 25px;
     margin: 0 10px;
 }
+
+ul#left-items > li > p.unread {
+    display: block;
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 20px;
+    background-color: #ff2700;
+    float: right;
+    margin-right: 15px;
+}
+
+.hide {
+    display: none;
+}
+

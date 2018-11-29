@@ -26,7 +26,7 @@
                 </div>
                 <div class="field">
                     <div class="btn-group">
-                        <button id="register-btn" type="submit" name="account-action" value="signin">注册</button>
+                        <button id="register-btn" type="submit" name="account-action" value="signin" style="display: none;">注册</button>
                         <button id="login-btn" type="submit" name="account-action" value="signon">登录</button>
                     </div>
                 </div>

@@ -1,116 +1,238 @@
 ;wp.message = {
-    messageType: {
-        short_message: "SHORT_MESSAGE",
-        reference_message: "REFERENCE",
-        system_message: "SYSTEM_MESSAGE"
+    currentMessageBox: undefined,
+
+    defaultMessageBox: undefined,
+
+    messageBoxMap: {},
+
+    messageBoxPrototype: {
+        name: "",
+        messageLiElements: [],
+        unreadCount: 0,
+        clearReceiveChildren: function () {
+            document.getElementById("received").innerHTML = "";
+        },
+        appendMessageLi: function (messageLiElement) {
+            this.messageLiElements.push(messageLiElement);
+        },
+        applyMessageLi: function (messageLiElement) {
+            document.getElementById("received").appendChild(messageLiElement);
+        },
+        receiveMessageLi: function (messageLiElement) {
+            this.appendMessageLi(messageLiElement);
+            let currentIsDefault = wp.message.getCurrentMessageBox().name === wp.message.getDefaultMessageBox().name;
+            let itIsBroadcastMessage = window.bool_dict[messageLiElement.getAttribute("broadcast")];
+            let itIsMyMessage = !messageLiElement.hasAttribute("source");
+            let messageAuthorIsCurrentName = messageLiElement.getAttribute("source") === wp.message.getCurrentMessageBox().name;
+            if (currentIsDefault && itIsMyMessage) {
+                this.applyMessageLi(messageLiElement);
+            } else if (currentIsDefault && itIsBroadcastMessage) {
+                this.applyMessageLi(messageLiElement);
+            } else if (messageAuthorIsCurrentName || itIsMyMessage) {
+                this.applyMessageLi(messageLiElement);
+            } else {
+                this.unreadCount += 1;
+            }
+        },
+        applyMessageBox: function () {
+            console.log(this.name + "-message-box-apply");
+            this.unreadCount = 0;
+            this.clearReceiveChildren();
+            this.messageLiElements.forEach(function (li) {
+                document.getElementById("received").appendChild(li);
+            });
+        }
     },
 
-    airmessage: {
+    messageType: {
+        system_message: "SYSTEM_MESSAGE",
+        short_message: "SHORT_MESSAGE",
+        reference_message: "REFERENCE"
+    },
+
+    airMessagePrototype: {
         type: "SHORT_MESSAGE",
         content: "",
         broadcastMessage: "true",
         fromAccount: "",
         toAccount: ""
     },
+};
 
-    init: function () {
-    },
+wp.message.messageBox = function (boxName) {
+    let messageDom = Object.create(wp.message.messageBoxPrototype);
+    messageDom.name = boxName;
+    messageDom.messageLiElements = new Array();
+    console.log(boxName + "<->" + messageDom);
+    return messageDom;
+};
 
-    shortMessage(content) {
-        let message = {};
-        message.type = this.airmessage.type;
-        message.content = content;
-        message.broadcastMessage = this.airmessage.broadcastMessage;
-        message.fromAccount = this.airmessage.fromAccount;
-        message.toAccount = this.airmessage.toAccount;
-        return message;
-    },
+wp.message.putMessageBox = function (boxName, messageBox) {
+    wp.message.messageBoxMap[boxName] = messageBox;
+};
 
-    referenceMessage(uuid) {
-        let message = {};
-        message.type = this.messageType.reference_message;
-        message.content = uuid;
-        message.broadcastMessage = this.airmessage.broadcastMessage;
-        message.fromAccount = this.airmessage.fromAccount;
-        message.toAccount = this.airmessage.toAccount;
-        return message;
-    },
+wp.message.removeMessageBox = function (boxName) {
+    delete wp.message.messageBoxMap[boxName];
+};
 
-    appendMyMessage: function (message) {
-        let oMessageUl = document.getElementById("received");
-        let emptyLiEle = document.createElement("li");
-        let mySendMessageLiEle = document.createElement("li");
-        mySendMessageLiEle.appendChild(this._wrapWithPreElement(message));
-        mySendMessageLiEle.className = "me";
-        oMessageUl.appendChild(mySendMessageLiEle);
-        oMessageUl.appendChild(emptyLiEle);
-    },
+wp.message.getMessageBoxByAccount = function (account) {
+    return wp.message.messageBoxMap[account];
+};
 
-    appendAccountEventMessage(account_event, target_account) {
-        let oMessageUl = document.getElementById("received");
-        let emptyLiEle = document.createElement("li");
-        let myReceivedMessageLiEle = document.createElement("li");
-        myReceivedMessageLiEle.innerHTML = target_account + "<<<>>>" + account_event;
-        myReceivedMessageLiEle.className = "apprise";
-        oMessageUl.appendChild(myReceivedMessageLiEle);
-        oMessageUl.appendChild(emptyLiEle);
-        if (account_event === "online") {
-            this._appendOnlineFriend(target_account);
-        } else if (account_event === "offline") {
-            this._removeOfflineFriend(target_account);
+wp.message.getDefaultMessageBox = function () {
+    return wp.message.defaultMessageBox;
+};
+
+wp.message.setDefaultMessageBox = function (messageBox) {
+    wp.message.defaultMessageBox = messageBox;
+};
+
+wp.message.getCurrentMessageBox = function () {
+    return wp.message.currentMessageBox;
+};
+
+wp.message.setCurrentMessageBox = function (messageBox) {
+    wp.message.currentMessageBox = messageBox;
+    wp.message.currentMessageBox.applyMessageBox();
+};
+
+wp.message.preparePrivateMessageBox = function (username) {
+    let messageBox = wp.message.messageBox(username);
+    wp.message.putMessageBox(username, messageBox);
+};
+
+wp.message.removePrivateMessageBox = function (username) {
+    wp.message.removeMessageBox(username);
+};
+
+wp.message.shortMessage = function (content) {
+    let message = Object.create(wp.message.airMessagePrototype);
+    message.content = content;
+    message.broadcastMessage = wp.message.getDefaultMessageBox().name === wp.message.getCurrentMessageBox().name;
+    message.fromAccount = window.my_username;
+    message.toAccount = wp.message.getCurrentMessageBox().name !== wp.message.getDefaultMessageBox().name
+        ? wp.message.getCurrentMessageBox().name
+        : "";
+    return message;
+};
+
+wp.message.referenceMessage = function (uuid) {
+    let message = Object.create(wp.message.airMessagePrototype);
+    message.type = wp.message.messageType.reference_message;
+    message.content = uuid;
+    message.broadcastMessage = wp.message.getDefaultMessageBox().name === wp.message.getCurrentMessageBox().name;
+    message.fromAccount = window.my_username;
+    message.toAccount = wp.message.getCurrentMessageBox().name !== wp.message.getDefaultMessageBox().name
+        ? wp.message.getCurrentMessageBox().name
+        : "";
+    return message;
+};
+
+wp.message.appendMyMessage = function (message) {
+    let emptyLiEle = document.createElement("li");
+    let mySendMessageLiEle = document.createElement("li");
+    mySendMessageLiEle.appendChild(wp.message.wrapPre(message));
+    mySendMessageLiEle.className = "me";
+    wp.message.getCurrentMessageBox().receiveMessageLi(mySendMessageLiEle);
+    wp.message.getCurrentMessageBox().receiveMessageLi(emptyLiEle);
+};
+
+wp.message.appendSystemMessage = function (message, fromAccount) {
+    let emptyLiEle = document.createElement("li");
+    let accountEventMessageLiEle = document.createElement("li");
+    accountEventMessageLiEle.innerHTML = fromAccount + " is " + message;
+    accountEventMessageLiEle.className = "apprise";
+    wp.message.getDefaultMessageBox().receiveMessageLi(accountEventMessageLiEle);
+    wp.message.getDefaultMessageBox().receiveMessageLi(emptyLiEle);
+
+    //为在线用户新建信息盒子，以备私聊用
+    if (message === "online") {
+        wp.message.preparePrivateMessageBox(fromAccount);
+        wp.message.addOnlineAccount(fromAccount);
+    } else if (message === "offline") {
+        wp.message.delOfflineAccount(fromAccount);
+        wp.message.removePrivateMessageBox(fromAccount);
+    }
+};
+
+wp.message.putInCorrectMessageBox = function (fromAccount, isBroadcast, messageLiElement) {
+    let emptyLiEle = document.createElement("li");
+    if (window.bool_dict[isBroadcast]) {
+        wp.message.getDefaultMessageBox().receiveMessageLi(messageLiElement);
+        wp.message.getDefaultMessageBox().receiveMessageLi(emptyLiEle);
+    } else {
+        wp.message.getMessageBoxByAccount(fromAccount).receiveMessageLi(messageLiElement);
+        wp.message.getMessageBoxByAccount(fromAccount).receiveMessageLi(emptyLiEle);
+    }
+};
+
+wp.message.appendReferenceMessage = function (uuid, fromAccount, isBroadcast) {
+    let receivedReferenceMessageLiElement = document.createElement("li");
+    receivedReferenceMessageLiElement.setAttribute("source", fromAccount);
+    receivedReferenceMessageLiElement.setAttribute("broadcast", isBroadcast);
+    wp.ajax.get(wp.main.constants.longtextUrl, {uuid: uuid}, function (response) {
+        receivedReferenceMessageLiElement.appendChild(wp.message.wrapPre(response));
+        receivedReferenceMessageLiElement.className = "others";
+        wp.message.putInCorrectMessageBox(fromAccount, isBroadcast, receivedReferenceMessageLiElement);
+    });
+};
+
+wp.message.appendReceivedMessage = function (content, fromAccount, isBroadcast) {
+    let receivedShortMessageLiElement = document.createElement("li");
+    receivedShortMessageLiElement.setAttribute("source", fromAccount);
+    receivedShortMessageLiElement.setAttribute("broadcast", isBroadcast);
+    receivedShortMessageLiElement.appendChild(wp.message.wrapPre(content));
+    receivedShortMessageLiElement.className = "others";
+    wp.message.putInCorrectMessageBox(fromAccount, isBroadcast, receivedShortMessageLiElement);
+};
+
+wp.message.addOnlineAccount = function (username) {
+
+    let accountLiParents = document.getElementById("left-items");
+    let accountLi = document.createElement("li");
+    let accountLiIcon = document.createElement("img");
+    accountLiIcon.setAttribute("src", wp.main.constants.iconUrl + "?username=" + username);
+    accountLiIcon.setAttribute("alt", "usericon");
+    accountLi.appendChild(accountLiIcon);
+    let accountName = document.createElement("span");
+    accountName.innerHTML = username;
+    accountLi.appendChild(accountName);
+
+    //绑定单击用户的事件后，单击后进入私聊，再次单击退出到群聊
+    accountLi.onclick = function (event) {
+        let eventElement = event.target;
+        if (eventElement.className === "select") {
+            eventElement.className = "";
+            wp.message.setCurrentMessageBox(wp.message.getDefaultMessageBox());
+        } else {
+            eventElement.className = "select";
+            wp.message.setCurrentMessageBox(wp.message.getMessageBoxByAccount(username));
         }
-    },
+    };
+    accountLiParents.appendChild(accountLi);
 
-    appendReferenceMessage(uuid, fromAccount) {
-        let oMessageUl = document.getElementById("received");
-        let emptyLiEle = document.createElement("li");
-        let myReceivedMessageLiEle = document.createElement("li");
-        wp.ajax.get(wp.main.constants.longtextUrl, {uuid: uuid}, function (response) {
-            myReceivedMessageLiEle.appendChild(wp.message._wrapWithPreElement(response));
-            myReceivedMessageLiEle.className = "others";
-            oMessageUl.appendChild(myReceivedMessageLiEle);
-            oMessageUl.appendChild(emptyLiEle);
-        });
-    },
+};
 
-    appendReceivedMessage: function (content, fromAccount) {
-        let oMessageUl = document.getElementById("received");
-        let emptyLiEle = document.createElement("li");
-        let myReceivedMessageLiEle = document.createElement("li");
-        myReceivedMessageLiEle.appendChild(this._wrapWithPreElement(content));
-        myReceivedMessageLiEle.className = "others";
-        oMessageUl.appendChild(myReceivedMessageLiEle);
-        oMessageUl.appendChild(emptyLiEle);
-    },
-
-    _appendOnlineFriend: function (username) {
-        let rosterEle = document.getElementById("left-items");
-        let aFriend = document.createElement("li");
-        let friendIcon = document.createElement("img");
-        friendIcon.setAttribute("src", wp.main.constants.iconUrl + "?username=" + username);
-        friendIcon.setAttribute("alt", "usericon");
-        aFriend.appendChild(friendIcon);
-        let friendName = document.createElement("span");
-        friendName.innerHTML = username;
-        aFriend.appendChild(friendName);
-        rosterEle.appendChild(aFriend);
-    },
-
-    _removeOfflineFriend: function (username) {
-        let liEleList = document.querySelector("#left-items").children;
-        for (let index = 0; index < liEleList.length; index++) {
-            let theFriendEle = liEleList[index];
-            let spanEle = theFriendEle.getElementsByTagName("span");
-            if (spanEle[0].innerHTML === username) {
-                theFriendEle.parentNode.removeChild(theFriendEle);
-                break;
-            }
+wp.message.delOfflineAccount = function (username) {
+    let accountLiElements = document.querySelector("#left-items").children;
+    for (let index = 0; index < accountLiElements.length; index++) {
+        let current = accountLiElements[index];
+        let spanEle = current.getElementsByTagName("span");
+        if (spanEle[0].innerHTML === username) {
+            current.parentNode.removeChild(current);
+            break;
         }
-    },
+    }
+};
 
-    _wrapWithPreElement: function (content) {
-        let preEle = document.createElement("pre");
-        preEle.innerText = content;
-        return preEle;
-    },
+wp.message.wrapPre = function (content) {
+    let preEle = document.createElement("pre");
+    preEle.innerText = content;
+    return preEle;
+};
+
+wp.message.init = function () {
+    wp.message.setDefaultMessageBox(wp.message.messageBox("default"));
+    wp.message.putMessageBox(wp.message.getDefaultMessageBox());
+    wp.message.setCurrentMessageBox(wp.message.getDefaultMessageBox());
 };

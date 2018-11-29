@@ -4,11 +4,13 @@ import org.apache.tomcat.websocket.WsSession;
 import zzk.webproject.service.ChatMessageService;
 import zzk.webproject.service.Services;
 import zzk.webproject.util.OnlineUserUtil;
+import zzk.webproject.util.StringUtil;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,7 +20,7 @@ public class ChatEndpoint {
 
     private static ChatMessageService chatMessageService = Services.getChatMessageService();
 
-    private static final LinkedList<ChatEndpoint> CHAT_ENDPOINTS = new LinkedList<>();
+    private static final LinkedList<ChatEndpoint> ENDPOINTS = new LinkedList<>();
     private Session session;
 
     @OnOpen
@@ -57,9 +59,14 @@ public class ChatEndpoint {
 
     @OnMessage
     public void message(AirMessage airMessage) {
-        airMessage.setFromAccount(getUsername(this.session));
+        String toAccount = airMessage.getToAccount();
+        if (!airMessage.getBroadcastMessage() && StringUtil.nonBlank(toAccount)) {
+            ChatEndpoint endpoint = getEndPointByUsername(toAccount);
+            sendObject(endpoint, airMessage);
+        } else {
+            broadcast(airMessage);
+        }
         recordMessage(airMessage);
-        broadcast(airMessage);
         LOGGER.log(Level.INFO, airMessage.toString());
     }
 
@@ -82,13 +89,20 @@ public class ChatEndpoint {
         );
     }
 
+    private ChatEndpoint getEndPointByUsername(String username) {
+        Optional<ChatEndpoint> chatEndpoint = ENDPOINTS.stream()
+                .filter(endpoint -> username.equals(getUsername(endpoint.session)))
+                .findFirst();
+        return chatEndpoint.get();
+    }
+
     /**
      * 记录连接到websocket的终端
      *
      * @param endpoint
      */
     private void registerEndpoint(ChatEndpoint endpoint) {
-        CHAT_ENDPOINTS.add(endpoint);
+        ENDPOINTS.add(endpoint);
     }
 
     /**
@@ -97,7 +111,15 @@ public class ChatEndpoint {
      * @param endpoint
      */
     private void unregisterEndpoint(ChatEndpoint endpoint) {
-        CHAT_ENDPOINTS.remove(endpoint);
+        ENDPOINTS.remove(endpoint);
+    }
+
+    private void sendObject(ChatEndpoint endpoint, Object message) {
+        try {
+            endpoint.session.getBasicRemote().sendObject(message);
+        } catch (IOException | EncodeException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -116,15 +138,11 @@ public class ChatEndpoint {
      * @param exclude
      */
     private void broadcast(Object object, ChatEndpoint exclude) {
-        for (ChatEndpoint endpoint : CHAT_ENDPOINTS) {
-            try {
-                if (exclude == endpoint) {
-                    continue;
-                }
-                endpoint.session.getBasicRemote().sendObject(object);
-            } catch (IOException | EncodeException e) {
-                LOGGER.log(Level.SEVERE, e.getMessage());
+        for (ChatEndpoint endpoint : ENDPOINTS) {
+            if (exclude == endpoint) {
+                continue;
             }
+            sendObject(endpoint, object);
         }
     }
 
@@ -146,7 +164,7 @@ public class ChatEndpoint {
     private void transferUnacceptedMessage(Session session) {
         RemoteEndpoint.Basic basicRemote = session.getBasicRemote();
         chatMessageService.list(airMessage -> MessageType.SHORT_MESSAGE.name().equals(airMessage.getType())
-                && MessageType.REFERENCE.name().equals(airMessage.getType())
+                || MessageType.REFERENCE.name().equals(airMessage.getType())
         ).forEach(airMessage -> {
             try {
                 basicRemote.sendObject(airMessage);
@@ -163,7 +181,7 @@ public class ChatEndpoint {
      */
     private void transferOnlineFriend(Session session) {
         RemoteEndpoint.Basic basicRemote = session.getBasicRemote();
-        for (ChatEndpoint endpoint : CHAT_ENDPOINTS) {
+        for (ChatEndpoint endpoint : ENDPOINTS) {
             try {
                 Session currentSession = endpoint.session;
                 if (currentSession == session) {

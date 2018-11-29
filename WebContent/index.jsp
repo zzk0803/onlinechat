@@ -46,10 +46,26 @@
     </body>
     <script>
         window.wp_context_path = "<%=application.getContextPath()%>";
-        console.log(window.wp_context_path);
+        window.my_username = "<%=session.getAttribute("username")%>";
+        window.bool_dict = {
+            "true": true,
+            "True": true,
+            "TRUE": true,
+            "false": false,
+            "False": false,
+            "FALSE": false
+        }
     </script>
     <script src="assets/wp.main.js" charset="UTF-8"></script>
     <script src="assets/wp.air.js" charset="UTF-8"></script>
     <script src="assets/wp.message.js" charset="UTF-8"></script>
     <script src="assets/wp.ajax.js" charset="UTF-8"></script>
+    <script>
+        window.onload = function () {
+            wp.main.init();
+            wp.air.init();
+            wp.message.init();
+            wp.ajax.init();
+        };
+    </script>
 </html>
