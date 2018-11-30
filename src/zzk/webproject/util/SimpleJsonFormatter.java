@@ -1,13 +1,10 @@
 package zzk.webproject.util;
 
-import zzk.webproject.air.AirMessage;
-import zzk.webproject.air.MessageType;
-import zzk.webproject.pojo.Account;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Type;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 public class SimpleJsonFormatter {
@@ -37,7 +34,7 @@ public class SimpleJsonFormatter {
     }
 
     /**
-     * {"id":"0","username":"username","password":"password"}
+     * 反序列化JSON字符串
      *
      * @param json
      * @return
@@ -45,8 +42,13 @@ public class SimpleJsonFormatter {
     public static <T> T fromJsonToObject(String json, Class<T> targetType) throws IllegalArgumentException {
         T instance = null;
         if (json.startsWith("{") && json.endsWith("}")) {
+            //截取JSON字符串“”以内的内容
             String withoutBrace = json.substring(json.indexOf("{") + 1, json.lastIndexOf("}")).replace("\"", "");
+
+            //分割数据项
             String[] keyValuePairs = withoutBrace.split(",");
+
+            //分割键值对
             for (String keyValuePair : keyValuePairs) {
                 String[] keyAndValue = keyValuePair.split(":");
                 String key = keyAndValue[0];
@@ -58,12 +60,15 @@ public class SimpleJsonFormatter {
                 }
 
                 try {
+                    //对应实体类的属性
                     Field targetTypeField = targetType.getDeclaredField(key);
                     if (Objects.isNull(instance)) {
                         instance = targetType.getDeclaredConstructor().newInstance();
                     }
                     Class<?> fieldType = targetTypeField.getType();
                     targetTypeField.setAccessible(true);
+
+                    //为实体类设置属性
                     targetTypeField.set(instance, ALLOWED_TYPE.get(fieldType).apply(value));
                 } catch (NoSuchFieldException e) {
                     throw new IllegalArgumentException("传入的类型无法和json匹配");

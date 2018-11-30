@@ -16,7 +16,7 @@
     <head>
         <meta charset="UTF-8">
         <meta http-equiv="pragma" content="no-cache">
-        <title>Home</title>
+        <title>网页在线聊天</title>
         <link rel="stylesheet" href="assets/index.css">
     </head>
     <body>

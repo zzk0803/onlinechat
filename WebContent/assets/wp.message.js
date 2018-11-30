@@ -89,7 +89,8 @@
     messageType: {
         system_message: "SYSTEM_MESSAGE",
         short_message: "SHORT_MESSAGE",
-        reference_message: "REFERENCE"
+        reference_message: "REFERENCE",
+        account_administer: "ACCOUNT_ADMINISTER"
     },
 
     airMessagePrototype: {
@@ -100,6 +101,12 @@
         toAccount: ""
     },
 };
+
+/**
+ * 信息盒子
+ * @param boxName
+ * @returns {wp.message.messageBoxPrototype}
+ */
 
 wp.message.messageBox = function (boxName) {
     let messageDom = Object.create(wp.message.messageBoxPrototype);
@@ -117,8 +124,8 @@ wp.message.removeMessageBox = function (boxName) {
     delete wp.message.messageBoxMap[boxName];
 };
 
-wp.message.getMessageBoxByAccount = function (account) {
-    return wp.message.messageBoxMap[account];
+wp.message.getMessageBoxByName = function (boxName) {
+    return wp.message.messageBoxMap[boxName];
 };
 
 wp.message.getDefaultMessageBox = function () {
@@ -138,14 +145,38 @@ wp.message.setCurrentMessageBox = function (messageBox) {
     wp.message.currentMessageBox.applyMessageBox();
 };
 
-wp.message.preparePrivateMessageBox = function (username) {
-    let messageBox = wp.message.messageBox(username);
-    wp.message.putMessageBox(username, messageBox);
+wp.message.prepareMessageBox = function (boxName) {
+    let messageBox = wp.message.messageBox(boxName);
+    wp.message.putMessageBox(boxName, messageBox);
 };
 
-wp.message.removePrivateMessageBox = function (username) {
-    wp.message.removeMessageBox(username);
+wp.message.removeMessageBox = function (boxName) {
+    if (this.getCurrentMessageBox().name === boxName) {
+        this.setCurrentMessageBox(this.getDefaultMessageBox());
+        this.putInCorrectMessageBox("public", true, wp.message.produceAppriseMessageLiElement("Target user was offline,public chat has been apply"));
+    }
+    wp.message.removeMessageBox(boxName);
 };
+
+wp.message.putInCorrectMessageBox = function (boxName, useDefaultBox, messageLiElement) {
+    if (window.bool_dict[useDefaultBox]) {
+        let messageBox = wp.message.getDefaultMessageBox();
+        messageBox.receiveMessageLi(messageLiElement);
+        messageBox.receiveMessageLi(this.produceEmptyLi());
+    } else {
+        let messageBox = wp.message.getMessageBoxByName(boxName);
+        if (messageBox) {
+            messageBox.receiveMessageLi(messageLiElement);
+            messageBox.receiveMessageLi(this.produceEmptyLi());
+        }
+    }
+};
+
+/**
+ * 构造方法
+ * @param content
+ * @returns {wp.message.airMessagePrototype}
+ */
 
 wp.message.shortMessage = function (content) {
     let message = Object.create(wp.message.airMessagePrototype);
@@ -170,45 +201,31 @@ wp.message.referenceMessage = function (uuid) {
     return message;
 };
 
+/**
+ * 处理收获信息
+ * @param message
+ */
+
 wp.message.appendMyMessage = function (message) {
-    let emptyLiEle = document.createElement("li");
     let mySendMessageLiEle = document.createElement("li");
     mySendMessageLiEle.appendChild(wp.message.wrapPre(message));
     mySendMessageLiEle.className = "me";
     wp.message.getCurrentMessageBox().receiveMessageLi(mySendMessageLiEle);
-    wp.message.getCurrentMessageBox().receiveMessageLi(emptyLiEle);
+    wp.message.getCurrentMessageBox().receiveMessageLi(this.produceEmptyLi());
 };
 
-wp.message.appendSystemMessage = function (message, fromAccount) {
-    let emptyLiEle = document.createElement("li");
-    let accountEventMessageLiEle = document.createElement("li");
-    accountEventMessageLiEle.innerHTML = fromAccount + " is " + message;
-    accountEventMessageLiEle.className = "apprise";
-    wp.message.getDefaultMessageBox().receiveMessageLi(accountEventMessageLiEle);
-    wp.message.getDefaultMessageBox().receiveMessageLi(emptyLiEle);
+wp.message.dealSystemMessage = function (message, fromAccount) {
+    let appriseMessage = fromAccount + " is " + message;
+    let appriseMessageLiElement = wp.message.produceAppriseMessageLiElement(appriseMessage);
+    wp.message.putInCorrectMessageBox("public", true, appriseMessageLiElement);
 
     //为在线用户新建信息盒子，以备私聊用
     if (message === "online") {
-        wp.message.preparePrivateMessageBox(fromAccount);
+        wp.message.prepareMessageBox(fromAccount);
         wp.message.addOnlineAccount(fromAccount);
     } else if (message === "offline") {
         wp.message.delOfflineAccount(fromAccount);
-        wp.message.removePrivateMessageBox(fromAccount);
-    }
-};
-
-wp.message.putInCorrectMessageBox = function (fromAccount, isBroadcast, messageLiElement) {
-    let emptyLiEle = document.createElement("li");
-    if (window.bool_dict[isBroadcast]) {
-        let messageBox = wp.message.getDefaultMessageBox();
-        messageBox.receiveMessageLi(messageLiElement);
-        messageBox.receiveMessageLi(emptyLiEle);
-    } else {
-        let messageBox = wp.message.getMessageBoxByAccount(fromAccount);
-        if (messageBox) {
-            messageBox.receiveMessageLi(messageLiElement);
-            messageBox.receiveMessageLi(emptyLiEle);
-        }
+        wp.message.removeMessageBox(fromAccount);
     }
 };
 
@@ -233,7 +250,6 @@ wp.message.appendReceivedMessage = function (content, fromAccount, isBroadcast) 
 };
 
 wp.message.addOnlineAccount = function (username) {
-
     let accountLiParents = document.getElementById("online-accounts");
     let accountLi = document.createElement("li");
     let accountLiIcon = document.createElement("img");
@@ -252,7 +268,7 @@ wp.message.addOnlineAccount = function (username) {
             wp.message.setCurrentMessageBox(wp.message.getDefaultMessageBox());
         } else {
             eventElement.className = "select";
-            wp.message.setCurrentMessageBox(wp.message.getMessageBoxByAccount(username));
+            wp.message.setCurrentMessageBox(wp.message.getMessageBoxByName(username));
         }
     };
     accountLiParents.appendChild(accountLi);
@@ -271,14 +287,34 @@ wp.message.delOfflineAccount = function (username) {
     }
 };
 
+/**
+ * 工具方法
+ * @param content
+ * @returns {HTMLElement}
+ */
+
 wp.message.wrapPre = function (content) {
     let preEle = document.createElement("pre");
     preEle.innerText = content;
     return preEle;
 };
 
+wp.message.produceAppriseMessageLiElement = function (message) {
+    let systemAppriseLiElement = document.createElement("li");
+    systemAppriseLiElement.innerHTML = message;
+    systemAppriseLiElement.className = "apprise";
+    return systemAppriseLiElement;
+};
+
+wp.message.produceEmptyLi = function () {
+    return document.createElement("li");
+};
+
+/**
+ * 对象初始化
+ */
 wp.message.init = function () {
-    wp.message.setDefaultMessageBox(wp.message.messageBox("default"));
+    wp.message.setDefaultMessageBox(wp.message.messageBox("public"));
     wp.message.putMessageBox(wp.message.getDefaultMessageBox());
     wp.message.setCurrentMessageBox(wp.message.getDefaultMessageBox());
 };

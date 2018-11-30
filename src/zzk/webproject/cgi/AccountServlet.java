@@ -2,7 +2,7 @@ package zzk.webproject.cgi;
 
 import zzk.webproject.service.AccountService;
 import zzk.webproject.service.Services;
-import zzk.webproject.util.OnlineUserUtil;
+import zzk.webproject.service.Roster;
 import zzk.webproject.util.StringUtil;
 
 import javax.servlet.ServletException;
@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -49,7 +48,7 @@ public class AccountServlet extends HttpServlet {
                     httpSession.setAttribute("id", httpSession.getId());
                     httpSession.setAttribute("username", username);
                     logger.log(Level.INFO, String.format("远程主机%s使用账户%s登录了", remoteAddr, username));
-                    OnlineUserUtil.register(username, httpSession);
+                    Roster.register(username, httpSession);
                     response.sendRedirect(request.getContextPath() + "/index.jsp");
                 } else {
                     response.sendRedirect(request.getContextPath() + "/account.jsp");

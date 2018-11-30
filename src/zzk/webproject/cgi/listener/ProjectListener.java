@@ -1,6 +1,6 @@
 package zzk.webproject.cgi.listener;
 
-import zzk.webproject.util.OnlineUserUtil;
+import zzk.webproject.service.Roster;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -57,7 +57,7 @@ public class ProjectListener implements ServletContextListener,
     @Override
     public void sessionDestroyed(HttpSessionEvent sessionEvent) {
         /* Session is destroyed. */
-        OnlineUserUtil.unregister(sessionEvent.getSession());
+        Roster.unregister(sessionEvent.getSession());
     }
 
     // -------------------------------------------------------

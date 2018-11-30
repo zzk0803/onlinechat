@@ -1,9 +1,9 @@
-package zzk.webproject.util;
+package zzk.webproject.service;
 
 import javax.servlet.http.HttpSession;
 import java.util.*;
 
-public class OnlineUserUtil {
+public class Roster {
     private static final Map<String, HttpSession> USERNAME_SESSION_MAP = new HashMap<>();
     private static final Map<HttpSession, String> SESSION_USERNAME_MAP = new HashMap<>();
 

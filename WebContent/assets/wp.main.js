@@ -35,10 +35,10 @@ wp.main.sendMessage = function () {
     let oTextarea = document.getElementById("msg");
     let message = oTextarea.value;
     // 判断是否是短文本，是的话直接使用websocket推送，否则通过servlet提交
-    if (wp.main.isShortText(message)) {
+    if (message.length > 0 && wp.main.isShortText(message)) {
         wp.air.send(
             JSON.stringify(
-                wp.message.shortMessage(message)
+                wp.message.shortMessage(escape(message))
             )
         );
     } else {

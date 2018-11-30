@@ -4,15 +4,18 @@ import java.io.Serializable;
 
 public class AirMessage implements Serializable {
     private String content;
-    private String type = MessageType.SHORT_MESSAGE.name();
-    private Boolean broadcastMessage = Boolean.TRUE;
+    private String type;
+    private Boolean broadcastMessage;
     private String fromAccount;
     private String toAccount;
 
     public AirMessage() {
+        this.type = MessageType.SHORT_MESSAGE.name();
+        this.broadcastMessage = Boolean.TRUE;
     }
 
     public AirMessage(String content) {
+        this();
         this.content = content;
     }
 
@@ -58,17 +61,27 @@ public class AirMessage implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof AirMessage)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof AirMessage)) {
+            return false;
+        }
 
         AirMessage that = (AirMessage) o;
 
-        if (getContent() != null ? !getContent().equals(that.getContent()) : that.getContent() != null) return false;
-        if (getType() != null ? !getType().equals(that.getType()) : that.getType() != null) return false;
-        if (getBroadcastMessage() != null ? !getBroadcastMessage().equals(that.getBroadcastMessage()) : that.getBroadcastMessage() != null)
+        if (getContent() != null ? !getContent().equals(that.getContent()) : that.getContent() != null) {
             return false;
-        if (getFromAccount() != null ? !getFromAccount().equals(that.getFromAccount()) : that.getFromAccount() != null)
+        }
+        if (getType() != null ? !getType().equals(that.getType()) : that.getType() != null) {
             return false;
+        }
+        if (getBroadcastMessage() != null ? !getBroadcastMessage().equals(that.getBroadcastMessage()) : that.getBroadcastMessage() != null) {
+            return false;
+        }
+        if (getFromAccount() != null ? !getFromAccount().equals(that.getFromAccount()) : that.getFromAccount() != null) {
+            return false;
+        }
         return getToAccount() != null ? getToAccount().equals(that.getToAccount()) : that.getToAccount() == null;
     }
 

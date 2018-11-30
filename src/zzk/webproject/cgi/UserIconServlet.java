@@ -1,6 +1,6 @@
 package zzk.webproject.cgi;
 
-import zzk.webproject.util.OnlineUserUtil;
+import zzk.webproject.service.Roster;
 
 import javax.imageio.ImageIO;
 import javax.servlet.annotation.WebServlet;
@@ -28,7 +28,7 @@ public class UserIconServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String username = request.getParameter("username");
-        HttpSession targetSession = OnlineUserUtil.getSession(username);
+        HttpSession targetSession = Roster.getSession(username);
         boolean isOnline = true;
         if (Objects.isNull(targetSession)) {
             isOnline = false;

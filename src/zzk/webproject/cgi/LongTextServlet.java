@@ -1,8 +1,5 @@
 package zzk.webproject.cgi;
 
-import zzk.webproject.air.AirMessage;
-import zzk.webproject.air.ChatEndpoint;
-import zzk.webproject.air.MessageType;
 import zzk.webproject.cgi.vo.LongTextResponseVO;
 import zzk.webproject.service.ChatMessageService;
 import zzk.webproject.service.Services;
@@ -12,14 +9,14 @@ import zzk.webproject.util.StringUtil;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

@@ -15,5 +15,10 @@ public enum MessageType {
     /**
      * 系统信息，推送用户上下线
      */
-    SYSTEM_MESSAGE
+    SYSTEM_MESSAGE,
+
+    /**
+     * 用户管理类信息，如禁言或取消禁言
+     */
+    ACCOUNT_ADMINISTER,
 }

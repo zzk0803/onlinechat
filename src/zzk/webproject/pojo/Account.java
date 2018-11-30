@@ -1,19 +1,14 @@
 package zzk.webproject.pojo;
 
-import java.util.Objects;
+import java.time.LocalDateTime;
 
 public class Account {
     private int id;
     private String username;
     private String password;
-
-    public Account() {
-    }
-
-    public Account(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
+    private LocalDateTime registerDateTime;
+    private LocalDateTime lastSignInDateTime;
+    private boolean silent;
 
     public int getId() {
         return id;
@@ -39,19 +34,46 @@ public class Account {
         this.password = password;
     }
 
+    public LocalDateTime getRegisterDateTime() {
+        return registerDateTime;
+    }
+
+    public void setRegisterDateTime(LocalDateTime registerDateTime) {
+        this.registerDateTime = registerDateTime;
+    }
+
+    public LocalDateTime getLastSignInDateTime() {
+        return lastSignInDateTime;
+    }
+
+    public void setLastSignInDateTime(LocalDateTime lastSignInDateTime) {
+        this.lastSignInDateTime = lastSignInDateTime;
+    }
+
+    public boolean isSilent() {
+        return silent;
+    }
+
+    public void setSilent(boolean silent) {
+        this.silent = silent;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Account)) return false;
+
         Account account = (Account) o;
-        return getId() == account.getId() &&
-                Objects.equals(getUsername(), account.getUsername()) &&
-                Objects.equals(getPassword(), account.getPassword());
+
+        if (getId() != account.getId()) return false;
+        return getUsername().equals(account.getUsername());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getUsername(), getPassword());
+        int result = getId();
+        result = 31 * result + getUsername().hashCode();
+        return result;
     }
 
     @Override
@@ -60,6 +82,9 @@ public class Account {
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
+                ", registerDateTime=" + registerDateTime +
+                ", lastSignInDateTime=" + lastSignInDateTime +
+                ", silent=" + silent +
                 '}';
     }
 }

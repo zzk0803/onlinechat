@@ -3,7 +3,7 @@ package zzk.webproject.air;
 import org.apache.tomcat.websocket.WsSession;
 import zzk.webproject.service.ChatMessageService;
 import zzk.webproject.service.Services;
-import zzk.webproject.util.OnlineUserUtil;
+import zzk.webproject.service.Roster;
 import zzk.webproject.util.StringUtil;
 
 import javax.websocket.*;
@@ -84,7 +84,7 @@ public class ChatEndpoint {
      * @return
      */
     private String getUsername(Session session) {
-        return OnlineUserUtil.getUsername(
+        return Roster.getUsername(
                 ((WsSession) session).getHttpSessionId()
         );
     }
