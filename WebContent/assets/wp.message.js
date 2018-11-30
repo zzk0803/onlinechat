@@ -153,12 +153,12 @@ wp.message.prepareMessageBox = function (boxName) {
 wp.message.removeMessageBox = function (boxName) {
     if (this.getCurrentMessageBox().name === boxName) {
         this.setCurrentMessageBox(this.getDefaultMessageBox());
-        this.putInCorrectMessageBox("public", true, wp.message.produceAppriseMessageLiElement("Target user was offline,public chat has been apply"));
+        this.putInSpecificMessageBox("public", true, wp.message.produceAppriseMessageLiElement("Target user was offline,public chat has been apply"));
     }
     wp.message.removeMessageBox(boxName);
 };
 
-wp.message.putInCorrectMessageBox = function (boxName, useDefaultBox, messageLiElement) {
+wp.message.putInSpecificMessageBox = function (boxName, useDefaultBox, messageLiElement) {
     if (window.bool_dict[useDefaultBox]) {
         let messageBox = wp.message.getDefaultMessageBox();
         messageBox.receiveMessageLi(messageLiElement);
@@ -217,7 +217,7 @@ wp.message.appendMyMessage = function (message) {
 wp.message.dealSystemMessage = function (message, fromAccount) {
     let appriseMessage = fromAccount + " is " + message;
     let appriseMessageLiElement = wp.message.produceAppriseMessageLiElement(appriseMessage);
-    wp.message.putInCorrectMessageBox("public", true, appriseMessageLiElement);
+    wp.message.putInSpecificMessageBox("public", true, appriseMessageLiElement);
 
     //为在线用户新建信息盒子，以备私聊用
     if (message === "online") {
@@ -236,7 +236,7 @@ wp.message.appendReferenceMessage = function (uuid, fromAccount, isBroadcast) {
     wp.ajax.get(wp.main.constants.longtextUrl, {uuid: uuid}, function (response) {
         receivedReferenceMessageLiElement.appendChild(wp.message.wrapPre(response));
         receivedReferenceMessageLiElement.className = "others";
-        wp.message.putInCorrectMessageBox(fromAccount, isBroadcast, receivedReferenceMessageLiElement);
+        wp.message.putInSpecificMessageBox(fromAccount, isBroadcast, receivedReferenceMessageLiElement);
     });
 };
 
@@ -246,7 +246,7 @@ wp.message.appendReceivedMessage = function (content, fromAccount, isBroadcast) 
     receivedShortMessageLiElement.setAttribute("broadcast", isBroadcast);
     receivedShortMessageLiElement.appendChild(wp.message.wrapPre(content));
     receivedShortMessageLiElement.className = "others";
-    wp.message.putInCorrectMessageBox(fromAccount, isBroadcast, receivedShortMessageLiElement);
+    wp.message.putInSpecificMessageBox(fromAccount, isBroadcast, receivedShortMessageLiElement);
 };
 
 wp.message.addOnlineAccount = function (username) {
