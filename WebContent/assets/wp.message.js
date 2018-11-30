@@ -261,16 +261,16 @@ wp.message.addOnlineAccount = function (username) {
     accountLi.appendChild(accountName);
 
     //绑定单击用户的事件后，单击后进入私聊，再次单击退出到群聊
-    accountLi.onclick = function (event) {
-        let eventElement = event.target;
-        if (eventElement.className === "select") {
-            eventElement.className = "";
+    accountLi.addEventListener("click", function (event) {
+        if (accountLi.className === "select") {
+            accountLi.className = "";
             wp.message.setCurrentMessageBox(wp.message.getDefaultMessageBox());
         } else {
-            eventElement.className = "select";
+            accountLi.className = "select";
             wp.message.setCurrentMessageBox(wp.message.getMessageBoxByName(username));
         }
-    };
+        event.stopPropagation();
+    }, true);
     accountLiParents.appendChild(accountLi);
 
 };

@@ -164,6 +164,7 @@ ul#online-accounts > li > img {
     height: 45px;
     border: 1px solid white;
     border-radius: 25px;
+    margin-top: 5px;
 }
 
 ul#online-accounts > li > span {
