@@ -22,8 +22,10 @@
     <body>
         <div id="centered-box">
             <div id="left-full-height">
+                <!--region 在线列表-->
                 <ul id="online-accounts">
                 </ul>
+                <!--endregion-->
             </div>
             <div id="right-full-height">
                 <div id="right-up-is-8">

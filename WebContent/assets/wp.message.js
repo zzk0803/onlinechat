@@ -56,6 +56,13 @@
             }
         },
 
+        scrollToBottom: function () {
+            let ele = document.getElementById("received");
+            if (ele.scrollHeight) {
+                ele.scrollTop = ele.scrollHeight;
+            }
+        },
+
         receiveMessageLi: function (messageLiElement) {
             this.appendMessageLi(messageLiElement);
             let sourceAccount = messageLiElement.getAttribute("source");
@@ -66,10 +73,13 @@
             let messageAuthorIsCurrentName = sourceAccount === wp.message.getCurrentMessageBox().name;
             if (currentIsDefault && itIsMyMessage) {
                 this.applyMessageLi(messageLiElement);
+                this.scrollToBottom();
             } else if (currentIsDefault && itIsBroadcastMessage) {
                 this.applyMessageLi(messageLiElement);
+                this.scrollToBottom();
             } else if (messageAuthorIsCurrentName || itIsMyMessage) {
                 this.applyMessageLi(messageLiElement);
+                this.scrollToBottom();
             } else {
                 this.unreadCount += 1;
                 this.updateAndShowUnreadBadge(sourceAccount);
@@ -83,6 +93,7 @@
             this.messageLiElements.forEach(function (li) {
                 document.getElementById("received").appendChild(li);
             });
+            this.scrollToBottom();
         }
     },
 
@@ -120,7 +131,7 @@ wp.message.putMessageBox = function (boxName, messageBox) {
     wp.message.messageBoxMap[boxName] = messageBox;
 };
 
-wp.message.removeMessageBox = function (boxName) {
+wp.message.deleteMessageBox = function (boxName) {
     delete wp.message.messageBoxMap[boxName];
 };
 
@@ -150,12 +161,12 @@ wp.message.prepareMessageBox = function (boxName) {
     wp.message.putMessageBox(boxName, messageBox);
 };
 
-wp.message.removeMessageBox = function (boxName) {
+wp.message.removeMessageBoxByName = function (boxName) {
     if (this.getCurrentMessageBox().name === boxName) {
         this.setCurrentMessageBox(this.getDefaultMessageBox());
         this.putInSpecificMessageBox("public", true, wp.message.produceAppriseMessageLiElement("Target user was offline,public chat has been apply"));
     }
-    wp.message.removeMessageBox(boxName);
+    this.deleteMessageBox(boxName);
 };
 
 wp.message.putInSpecificMessageBox = function (boxName, useDefaultBox, messageLiElement) {
@@ -225,7 +236,7 @@ wp.message.dealSystemMessage = function (message, fromAccount) {
         wp.message.addOnlineAccount(fromAccount);
     } else if (message === "offline") {
         wp.message.delOfflineAccount(fromAccount);
-        wp.message.removeMessageBox(fromAccount);
+        wp.message.removeMessageBoxByName(fromAccount);
     }
 };
 
