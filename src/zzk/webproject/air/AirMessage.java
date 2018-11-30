@@ -1,11 +1,13 @@
 package zzk.webproject.air;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 public class AirMessage implements Serializable {
     private String content;
     private String type;
     private Boolean broadcastMessage;
+    private LocalDateTime happenDataTime;
     private String fromAccount;
     private String toAccount;
 
@@ -43,6 +45,14 @@ public class AirMessage implements Serializable {
         this.broadcastMessage = broadcastMessage;
     }
 
+    public LocalDateTime getHappenDataTime() {
+        return happenDataTime;
+    }
+
+    public void setHappenDataTime(LocalDateTime happenDataTime) {
+        this.happenDataTime = happenDataTime;
+    }
+
     public String getFromAccount() {
         return fromAccount;
     }
@@ -61,27 +71,19 @@ public class AirMessage implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof AirMessage)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (!(o instanceof AirMessage)) return false;
 
         AirMessage that = (AirMessage) o;
 
-        if (getContent() != null ? !getContent().equals(that.getContent()) : that.getContent() != null) {
+        if (getContent() != null ? !getContent().equals(that.getContent()) : that.getContent() != null) return false;
+        if (getType() != null ? !getType().equals(that.getType()) : that.getType() != null) return false;
+        if (getBroadcastMessage() != null ? !getBroadcastMessage().equals(that.getBroadcastMessage()) : that.getBroadcastMessage() != null)
             return false;
-        }
-        if (getType() != null ? !getType().equals(that.getType()) : that.getType() != null) {
+        if (getHappenDataTime() != null ? !getHappenDataTime().equals(that.getHappenDataTime()) : that.getHappenDataTime() != null)
             return false;
-        }
-        if (getBroadcastMessage() != null ? !getBroadcastMessage().equals(that.getBroadcastMessage()) : that.getBroadcastMessage() != null) {
+        if (getFromAccount() != null ? !getFromAccount().equals(that.getFromAccount()) : that.getFromAccount() != null)
             return false;
-        }
-        if (getFromAccount() != null ? !getFromAccount().equals(that.getFromAccount()) : that.getFromAccount() != null) {
-            return false;
-        }
         return getToAccount() != null ? getToAccount().equals(that.getToAccount()) : that.getToAccount() == null;
     }
 
@@ -90,6 +92,7 @@ public class AirMessage implements Serializable {
         int result = getContent() != null ? getContent().hashCode() : 0;
         result = 31 * result + (getType() != null ? getType().hashCode() : 0);
         result = 31 * result + (getBroadcastMessage() != null ? getBroadcastMessage().hashCode() : 0);
+        result = 31 * result + (getHappenDataTime() != null ? getHappenDataTime().hashCode() : 0);
         result = 31 * result + (getFromAccount() != null ? getFromAccount().hashCode() : 0);
         result = 31 * result + (getToAccount() != null ? getToAccount().hashCode() : 0);
         return result;
@@ -101,6 +104,7 @@ public class AirMessage implements Serializable {
                 "content='" + content + '\'' +
                 ", type='" + type + '\'' +
                 ", broadcastMessage=" + broadcastMessage +
+                ", happenDataTime=" + happenDataTime +
                 ", fromAccount='" + fromAccount + '\'' +
                 ", toAccount='" + toAccount + '\'' +
                 '}';

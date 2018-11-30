@@ -28,16 +28,11 @@ public class UserIconServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String username = request.getParameter("username");
-        HttpSession targetSession = Roster.getSession(username);
-        boolean isOnline = true;
-        if (Objects.isNull(targetSession)) {
-            isOnline = false;
-        }
         String printString = Character.toString(username.charAt(0));
 
         BufferedImage image = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_INT_RGB);
         Graphics g = image.getGraphics();
-        Color c = isOnline ? new Color(getRGBColorInteger(), getRGBColorInteger(), getRGBColorInteger()) : Color.GRAY;
+        Color c = new Color(getRGBColorInteger(), getRGBColorInteger(), getRGBColorInteger());
         g.setColor(c);
         g.fillRect(0, 0, IMG_WIDTH, IMG_HEIGHT);
 
