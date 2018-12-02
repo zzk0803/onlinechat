@@ -9,7 +9,6 @@ import zzk.webproject.util.StringUtil;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -17,7 +16,7 @@ import java.util.logging.Logger;
 
 @ServerEndpoint(value = "/ws/chat", encoders = {AirMessageEncoder.class}, decoders = {AirMessageDecoder.class})
 public class ChatEndpoint {
-    private static final Logger LOGGER = Logger.getLogger(ChatEndpoint.class.getName());
+    public static final Logger LOGGER = Logger.getLogger(ChatEndpoint.class.getName());
 
     private static ChatMessageService chatMessageService = Services.getChatMessageService();
 
@@ -60,15 +59,14 @@ public class ChatEndpoint {
 
     @OnMessage
     public void message(AirMessage airMessage) {
-        airMessage.setHappenDataTime(LocalDateTime.now());
         String toAccount = airMessage.getToAccount();
-        recordMessage(airMessage);
         if (!airMessage.getBroadcastMessage() && StringUtil.nonBlank(toAccount)) {
             ChatEndpoint endpoint = getEndPointByUsername(toAccount);
             sendObject(endpoint, airMessage);
         } else {
             broadcast(airMessage);
         }
+        recordMessage(airMessage);
         LOGGER.log(Level.INFO, airMessage.toString());
     }
 
@@ -86,8 +84,9 @@ public class ChatEndpoint {
      * @return
      */
     private String getUsername(Session session) {
-        String httpSessionId = ((WsSession) session).getHttpSessionId();
-        return Roster.getUsername(httpSessionId);
+        return Roster.getUsername(
+                ((WsSession) session).getHttpSessionId()
+        );
     }
 
     private ChatEndpoint getEndPointByUsername(String username) {
@@ -164,13 +163,8 @@ public class ChatEndpoint {
      */
     private void transferUnacceptedMessage(Session session) {
         RemoteEndpoint.Basic basicRemote = session.getBasicRemote();
-        chatMessageService.list(airMessage -> {
-                    boolean isShortMessage;
-                    boolean isLongText;
-                    isShortMessage = MessageType.SHORT_MESSAGE.name().equals(airMessage.getType());
-                    isLongText = MessageType.REFERENCE.name().equals(airMessage.getType());
-                    return isLongText || isShortMessage;
-                }
+        chatMessageService.list(airMessage -> MessageType.SHORT_MESSAGE.name().equals(airMessage.getType())
+                || MessageType.REFERENCE.name().equals(airMessage.getType())
         ).forEach(airMessage -> {
             try {
                 basicRemote.sendObject(airMessage);
