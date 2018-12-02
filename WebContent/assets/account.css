@@ -17,6 +17,19 @@ body {
     width: 80%;
 }
 
+#account-box *.field > .tips {
+    font-weight: bold;
+    font-size: 8px;
+}
+
+#account-box .tips.success {
+    color: #10731d;
+}
+
+#account-box .tips.failed {
+    color: #a70600;
+}
+
 #account-box *.field input {
     width: 100%;
     padding: 5px;

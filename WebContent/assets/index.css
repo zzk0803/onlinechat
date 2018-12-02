@@ -102,7 +102,8 @@ body {
     padding: 2px;
     height: 88%;
     width: 98%;
-    font-size: 28px;
+    font-size: 18px;
+    font-family: 'DejaVu Serif', Georgia, "Times New Roman", Times, serif;
     resize: none;
     color: cornflowerblue;
     border: none;

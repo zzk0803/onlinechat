@@ -9,6 +9,9 @@ class MemoryAccountServiceImplementor extends AccountServiceImplementor {
 
     @Override
     public synchronized boolean register(String username, String password) {
+        if (hasExistUsername(username)) {
+            return false;
+        }
         put(username, password);
         return hasExistUsername(username);
     }

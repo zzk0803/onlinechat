@@ -1,7 +1,7 @@
 package zzk.webproject.service;
 
-public class Services {
-    private static final AccountService ACCOUNT_SERVICE_INSTANCE = new FacilitatedTestingAccountService(new MemoryAccountServiceImplementor());
+public final class Services {
+    private static final AccountService ACCOUNT_SERVICE_INSTANCE = new AccountService(new MemoryAccountServiceImplementor());
 
     private static final ChatMessageService CHAT_MESSAGE_SERVICE = new ChatMessageService(new MemoryChatMessageImplementor());
 

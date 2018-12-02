@@ -1,5 +1,6 @@
 package zzk.webproject.cgi;
 
+import zzk.webproject.cgi.vo.AccountResponseVO;
 import zzk.webproject.service.AccountService;
 import zzk.webproject.service.Services;
 import zzk.webproject.service.Roster;
@@ -32,12 +33,22 @@ public class AccountServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/account.jsp");
         }
 
+        AccountResponseVO responseVO;
         switch (accountAction) {
             case "signin":
                 if (accountService.register(username, password)) {
                     logger.log(Level.INFO, String.format("远程主机%s成功的注册了用户名%s", remoteAddr, username));
-                    response.sendRedirect(request.getContextPath() + "/account.jsp");
+                    responseVO = new AccountResponseVO();
+                    responseVO.setActionResult("success");
+                    responseVO.setShowMessage("注册成功，请登录");
+                    request.setAttribute("response", responseVO);
+                    request.getRequestDispatcher("account.jsp").forward(request, response);
                 } else {
+                    responseVO = new AccountResponseVO();
+                    responseVO.setActionResult("failed");
+                    responseVO.setShowMessage("用户名已存在");
+                    request.setAttribute("response", responseVO);
+                    request.getRequestDispatcher("account.jsp").forward(request, response);
                     logger.log(Level.INFO, String.format("远程主机%s试图注册用户名%s，但失败了", remoteAddr, username));
                 }
                 break;
@@ -51,7 +62,11 @@ public class AccountServlet extends HttpServlet {
                     Roster.register(username, httpSession);
                     response.sendRedirect(request.getContextPath() + "/index.jsp");
                 } else {
-                    response.sendRedirect(request.getContextPath() + "/account.jsp");
+                    responseVO = new AccountResponseVO();
+                    responseVO.setActionResult("failed");
+                    responseVO.setShowMessage("用户名或密码错误");
+                    request.setAttribute("response", responseVO);
+                    request.getRequestDispatcher("account.jsp").forward(request, response);
                 }
                 break;
 
