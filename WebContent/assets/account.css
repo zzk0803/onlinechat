@@ -40,8 +40,8 @@ body {
 }
 
 #account-box *.field div.btn-group {
-    width: 85%;
     margin: 0 auto;
+    text-align: center;
 }
 
 #account-box *.field button {
@@ -49,14 +49,14 @@ body {
     padding: 5px 35px;
     border: none;
     font-weight: bolder;
+    display: inline-block;
+    text-align: center;
 }
 
 #account-box *.field button#register-btn {
-    float: left;
     background-color: mediumaquamarine;
 }
 
 #account-box *.field button#login-btn {
-    float: right;
     background-color: goldenrod;
 }
