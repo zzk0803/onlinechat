@@ -185,6 +185,8 @@ ul#online-accounts > li > p.unread {
     background-color: #ff2700;
     float: right;
     margin-right: 15px;
+    text-align: center;
+    vertical-align: center;
 }
 
 .hide {
