@@ -277,6 +277,13 @@ wp.message.addOnlineAccount = function (username) {
             accountLi.className = "";
             wp.message.setCurrentMessageBox(wp.message.getDefaultMessageBox());
         } else {
+            //如果先前有select的li，则清楚select标志
+            let htmlCollectionOfOnlineAccounts = accountLiParents.getElementsByClassName("select");
+            for (let index = 0; index < htmlCollectionOfOnlineAccounts.length; index++) {
+                htmlCollectionOfOnlineAccounts[index].className = "";
+            }
+
+            //为目标添加select标志
             accountLi.className = "select";
             wp.message.setCurrentMessageBox(wp.message.getMessageBoxByName(username));
         }

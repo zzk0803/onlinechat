@@ -74,16 +74,17 @@ wp.main.bindSendBtn = function () {
     }
 };
 
-// wp.main.bindKeyShortCut = function () {
-//     window.onkeydown = function (event) {
-//         if (event.ctrlKey && event.code === 13) {
-//             this.sendMessage();
-//         }
-//         event.stopPropagation();
-//     }
-// };
+wp.main.bindKeyShortCut = function () {
+    // let textarea = document.getElementById("msg");
+    window.onkeydown = function (event) {
+        if (event.ctrlKey && event.key === "Enter") {
+            wp.main.sendMessage();
+        }
+        event.stopPropagation();
+    }
+};
 
 wp.main.init = function () {
     this.bindSendBtn();
-    // this.bindKeyShortCut();
+    this.bindKeyShortCut();
 };
