@@ -6,7 +6,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class MemoryChatMessageImplementor extends ChatMessageServiceImplementor {
+public class ChatMessageMemoryImplementor extends ChatMessageServiceImplementor {
     public static final int MESSAGE_MAXIMUM = 32;
     private static final LinkedList<AirMessage> MESSAGES = new LinkedList<>();
     public static final Map<String, String> LONGTEXT = new HashMap<>();

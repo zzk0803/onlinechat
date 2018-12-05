@@ -3,7 +3,7 @@ package zzk.webproject.service;
 import java.util.HashMap;
 import java.util.Map;
 
-class MemoryAccountServiceImplementor extends AccountServiceImplementor {
+class AccountServiceMemoryImplementor extends AccountServiceImplementor {
 
     static final Map<String, String> MEMORY_REALM = new HashMap<>();
 

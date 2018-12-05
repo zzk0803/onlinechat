@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DatabaseAccountServiceImplementor extends AccountServiceImplementor {
+public class AccountServiceDatabaseImplementor extends AccountServiceImplementor {
 
     @Override
     public boolean register(String username, String password) {
@@ -34,7 +34,7 @@ public class DatabaseAccountServiceImplementor extends AccountServiceImplementor
                     current.setPassword(password1);
                 }
             }catch (SQLException ex) {
-                Logger.getLogger(DatabaseAccountServiceImplementor.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(AccountServiceDatabaseImplementor.class.getName()).log(Level.SEVERE, null, ex);
             }
             return current;
         }, username, password);

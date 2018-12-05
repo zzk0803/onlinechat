@@ -28,7 +28,7 @@ public class ChatEndpoint {
         this.session = session;
         registerEndpoint(this);
 
-        String username = getUsername(session);
+        String username = getUsernameByWsSession(session);
         AirMessage message = new AirMessage();
         message.setType(MessageType.SYSTEM_MESSAGE);
         message.setContent("online");
@@ -44,7 +44,7 @@ public class ChatEndpoint {
 
     @OnClose
     public void end() {
-        String username = getUsername(session);
+        String username = getUsernameByWsSession(session);
         AirMessage message = new AirMessage();
         message.setType(MessageType.SYSTEM_MESSAGE);
         message.setContent("offline");
@@ -72,9 +72,8 @@ public class ChatEndpoint {
 
     @OnError
     public void error(Throwable throwable) {
-        throwable.printStackTrace();
-        end();
         LOGGER.log(Level.SEVERE, throwable.getMessage());
+        end();
     }
 
     /**
@@ -83,7 +82,7 @@ public class ChatEndpoint {
      * @param session
      * @return
      */
-    private String getUsername(Session session) {
+    private String getUsernameByWsSession(Session session) {
         return Roster.getUsername(
                 ((WsSession) session).getHttpSessionId()
         );
@@ -91,7 +90,7 @@ public class ChatEndpoint {
 
     private ChatEndpoint getEndPointByUsername(String username) {
         Optional<ChatEndpoint> chatEndpoint = ENDPOINTS.stream()
-                .filter(endpoint -> username.equals(getUsername(endpoint.session)))
+                .filter(endpoint -> username.equals(getUsernameByWsSession(endpoint.session)))
                 .findFirst();
         return chatEndpoint.get();
     }
@@ -189,7 +188,7 @@ public class ChatEndpoint {
                 }
                 AirMessage airMessage = new AirMessage("online");
                 airMessage.setType(MessageType.SYSTEM_MESSAGE);
-                airMessage.setFromAccount(getUsername(currentSession));
+                airMessage.setFromAccount(getUsernameByWsSession(currentSession));
                 basicRemote.sendObject(airMessage);
             } catch (EncodeException | IOException e) {
                 LOGGER.severe(e.getMessage());

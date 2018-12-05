@@ -1,11 +1,11 @@
 package zzk.webproject.service;
 
-class FacilitatedTestingAccountService extends AccountService {
+class AccountServiceFacilitatedTestingImprovement extends AccountService {
 
-    public FacilitatedTestingAccountService() {
+    public AccountServiceFacilitatedTestingImprovement() {
     }
 
-    public FacilitatedTestingAccountService(AccountServiceImplementor accountService) {
+    public AccountServiceFacilitatedTestingImprovement(AccountServiceImplementor accountService) {
         super(accountService);
     }
 

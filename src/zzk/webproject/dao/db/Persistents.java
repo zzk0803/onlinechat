@@ -1,6 +1,10 @@
 package zzk.webproject.dao.db;
 
+import zzk.webproject.pojo.Account;
+
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -28,22 +32,25 @@ public class Persistents {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            erasure(connection);
+            erasure();
         }
         return update;
     }
 
-    public static <POJO> POJO doQuery(String sql, Function<ResultSet, POJO> resultSetFunction, Object... parameters) {
+    public static <POJO> List<POJO> doQuery(Class<POJO> mapToClazz, Function<ResultSet, POJO> singleRSFunction, String prepareStatementSql, Object... parameters) {
+        List<POJO> pojoList = new ArrayList<>();
         Connection connection = get();
         ResultSet resultSet = null;
-        POJO result = null;
         try {
-            PreparedStatement prepareStatement = connection.prepareStatement(sql);
+            PreparedStatement prepareStatement = connection.prepareStatement(prepareStatementSql);
             for (int index = 0; parameters.length > 0 && index < parameters.length; index++) {
                 prepareStatement.setObject(index, parameters[index]);
             }
             resultSet = prepareStatement.executeQuery();
-            result = resultSetFunction.apply(resultSet);
+            while (resultSet.next()) {
+                POJO singlePOJO = singleRSFunction.apply(resultSet);
+                pojoList.add(singlePOJO);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -54,9 +61,9 @@ public class Persistents {
                     e.printStackTrace();
                 }
             }
-            erasure(connection);
+            erasure();
         }
-        return result;
+        return pojoList;
     }
 
     public static Connection get() {
@@ -75,8 +82,9 @@ public class Persistents {
         return connection;
     }
 
-    public static void erasure(Connection connection) {
-        if (connection == DB_CONNECTION_THREADLOCAL.get()) {
+    public static void erasure() {
+        Connection connection = DB_CONNECTION_THREADLOCAL.get();
+        if (Objects.nonNull(connection)) {
             try {
                 connection.close();
             } catch (SQLException e) {
@@ -84,5 +92,9 @@ public class Persistents {
             }
             DB_CONNECTION_THREADLOCAL.remove();
         }
+    }
+
+    public static void main(String[] args) {
+        List<Account> accounts = doQuery(Account.class, resultSet -> new Account(), "select * from tb_account");
     }
 }
