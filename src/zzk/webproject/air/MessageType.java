@@ -21,4 +21,9 @@ public enum MessageType {
      * 用户管理类信息，如禁言或取消禁言
      */
     ACCOUNT_ADMINISTER,
+
+    /**
+     * 心跳检测信息
+     */
+    HEART_BEAT
 }

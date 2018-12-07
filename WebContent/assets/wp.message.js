@@ -101,7 +101,8 @@
         system_message: "SYSTEM_MESSAGE",
         short_message: "SHORT_MESSAGE",
         reference_message: "REFERENCE",
-        account_administer: "ACCOUNT_ADMINISTER"
+        account_administer: "ACCOUNT_ADMINISTER",
+        heart_beat: "HEART_BEAT"
     },
 
     airMessagePrototype: {
@@ -188,6 +189,13 @@ wp.message.putInSpecificMessageBox = function (boxName, useDefaultBox, messageLi
  * @param content
  * @returns {wp.message.airMessagePrototype}
  */
+
+wp.message.heartBeatMessage = function () {
+    let heartbeat = Object.create(wp.message.airMessagePrototype);
+    heartbeat.messageType = wp.message.messageType.heart_beat;
+    heartbeat.content = "TOP";
+    heartbeat.fromAccount = window.my_username;
+};
 
 wp.message.shortMessage = function (content) {
     let message = Object.create(wp.message.airMessagePrototype);

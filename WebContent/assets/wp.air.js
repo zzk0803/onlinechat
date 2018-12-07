@@ -37,6 +37,10 @@ wp.air.init = function () {
                 // todo:接收到账户管控信息，禁用或启用禁言
                 break;
 
+            case wp.message.messageType.heart_beat:
+                wp.air.send(wp.message.heartBeatMessage());
+                break;
+
             default:
                 break;
         }

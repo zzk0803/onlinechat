@@ -6,13 +6,6 @@
 package zzk.webproject.service;
 
 import zzk.webproject.dao.db.Persistents;
-import zzk.webproject.pojo.Account;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class AccountServiceDatabaseImplementor extends AccountServiceImplementor {
 
@@ -23,26 +16,12 @@ public class AccountServiceDatabaseImplementor extends AccountServiceImplementor
 
     @Override
     public boolean login(String username, String password) {
-        Account account = Persistents.doQuery("select username,password from tb_account where username=? and password=?", (ResultSet resultSet) -> {
-            Account current = null;
-            try {
-                while (resultSet.next()) {
-                    current = new Account();
-                    String username1 = resultSet.getString("username");
-                    String password1 = resultSet.getString("password");
-                    current.setUsername(username1);
-                    current.setPassword(password1);
-                }
-            }catch (SQLException ex) {
-                Logger.getLogger(AccountServiceDatabaseImplementor.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            return current;
-        }, username, password);
-        return Objects.nonNull(account);
+        throw new UnsupportedOperationException("Not supported yet.");
     }
+
     @Override
     public boolean deleteAccount(String username) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

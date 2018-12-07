@@ -1,5 +1,6 @@
 package zzk.webproject.cgi.listener;
 
+import zzk.webproject.air.ChatEndpoint;
 import zzk.webproject.service.Roster;
 
 import javax.servlet.ServletContextEvent;
@@ -42,6 +43,7 @@ public class ProjectListener implements ServletContextListener,
          (the Web application) is undeployed or 
          Application Server shuts down.
       */
+        ChatEndpoint.close();
     }
 
     // -------------------------------------------------------
