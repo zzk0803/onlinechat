@@ -20,7 +20,7 @@ public class ChatMessageMemoryImplementor extends ChatMessageServiceImplementor 
     }
 
     @Override
-    public void mapLongText(String referenceUUID, String longText) {
+    public void addLongText(String referenceUUID, String longText) {
         LONGTEXT.put(referenceUUID, longText);
     }
 

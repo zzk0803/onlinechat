@@ -5,13 +5,13 @@
  */
 package zzk.webproject.service;
 
-import zzk.webproject.dao.db.Persistents;
+import zzk.webproject.dao.db.Persistence;
 
 public class AccountServiceDatabaseImplementor extends AccountServiceImplementor {
 
     @Override
     public boolean register(String username, String password) {
-        return Persistents.doUpdate("insert into tb_account (username,password) values (?,?)", username, password) > 0;
+        return Persistence.doUpdate("insert into tb_account (username,password) values (?,?)", username, password) > 0;
     }
 
     @Override

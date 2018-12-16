@@ -8,7 +8,7 @@ public abstract class ChatMessageServiceImplementor {
 
     public abstract void save(AirMessage message);
 
-    public abstract void mapLongText(String referenceUUID, String longText);
+    public abstract void addLongText(String referenceUUID, String longText);
 
     public abstract boolean isExist(String referenceUUID);
 

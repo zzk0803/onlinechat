@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-public class Persistents {
+public class Persistence {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/webproject";
     private static final String DB_DRIVER_NAME = "org.mysql.driver.Driver";
     private static final String DB_USERNAME = "root";
@@ -16,7 +16,7 @@ public class Persistents {
 
     private static final ThreadLocal<Connection> DB_CONNECTION_THREADLOCAL = new ThreadLocal<>();
 
-    private Persistents() {
+    private Persistence() {
 
     }
 
@@ -92,9 +92,5 @@ public class Persistents {
             }
             DB_CONNECTION_THREADLOCAL.remove();
         }
-    }
-
-    public static void main(String[] args) {
-        List<Account> accounts = doQuery(Account.class, resultSet -> new Account(), "select * from tb_account");
     }
 }

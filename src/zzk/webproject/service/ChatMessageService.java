@@ -28,7 +28,7 @@ public class ChatMessageService {
     }
 
     public void mapLongText(String referenceUUID, String text) {
-        chatMessageServiceImplementor.mapLongText(referenceUUID, text);
+        chatMessageServiceImplementor.addLongText(referenceUUID, text);
     }
 
     public String getLongText(String referenceUUID) {
