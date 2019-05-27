@@ -2,32 +2,49 @@
 <project version="4">
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$/out/artifacts/webproject_war_exploded/WEB-INF/web.xml" />
-    <file type="web" url="file://$PROJECT_DIR$/reference/chatTeacher/WebContent/WEB-INF/web.xml" />
   </component>
   <component name="JavaScriptSettings">
     <option name="languageLevel" value="ES6" />
   </component>
-  <component name="JuliaProjectSettings">
-    <option name="basePath" value="H:\Julia-1.0.1\share\julia\base" />
-    <option name="exePath" value="H:\Julia-1.0.1\bin\julia.exe" />
-    <option name="version" value="Unknown" />
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State />
+          <State>
+            <id>Android</id>
+          </State>
+          <State>
+            <id>DOM issuesJavaScript</id>
+          </State>
+          <State>
+            <id>GeneralJavaScript</id>
+          </State>
+          <State>
+            <id>JavaScript</id>
+          </State>
+          <State>
+            <id>LintAndroid</id>
+          </State>
+          <State>
+            <id>Node.jsJavaScript</id>
+          </State>
+          <State>
+            <id>PerformanceLintAndroid</id>
+          </State>
+          <State>
+            <id>XPath</id>
+          </State>
+        </expanded-state>
+      </profile-state>
+    </entry>
   </component>
-  <component name="Kotlin2JsCompilerArguments">
-    <option name="sourceMapEmbedSources" />
-  </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" project-jdk-name="11" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_12" default="false" project-jdk-name="12" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
-  <component name="RemoteRepositoriesConfiguration">
-    <remote-repository>
-      <option name="id" value="313506b7-4db5-48d2-9814-1507e3990d79" />
-      <option name="name" value="313506b7-4db5-48d2-9814-1507e3990d79" />
-      <option name="url" value="http://repo2.maven.org/maven2/" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="a56c9c98-0f9b-4fdc-b935-b8bb1e74ba39" />
-      <option name="name" value="a56c9c98-0f9b-4fdc-b935-b8bb1e74ba39" />
-      <option name="url" value="http://maven.aliyun.com/nexus/content/groups/public/" />
-    </remote-repository>
+  <component name="designer2.settings">
+    <option name="autodetectServerAddress" value="true" />
+    <option name="flowTheme" value="LUMO" />
+    <option name="serverIp" value="localhost" />
   </component>
 </project>

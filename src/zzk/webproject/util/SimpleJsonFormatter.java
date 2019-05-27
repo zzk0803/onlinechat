@@ -113,24 +113,4 @@ public class SimpleJsonFormatter {
         buildingJsonString.append("}");
         return buildingJsonString.toString();
     }
-
-//    public static void main(String[] args) {
-//        String jsonString = toJsonString(new AirMessage());
-//        AirMessage account = fromJsonToObject(jsonString, AirMessage.class);
-//        System.out.println(account);
-////        Field[] fields = AirMessage.class.getDeclaredFields();
-////        for (Field field : fields) {
-////            field.setAccessible(true);
-////            System.out.print(field.getType());
-////            System.out.print(",");
-////            System.out.println(field.getName());
-////        }
-////
-////        try {
-////            Field uuid = AirMessage.class.getDeclaredField("uuid");
-////            System.out.println(uuid.getType());
-////        } catch (NoSuchFieldException e) {
-////            e.printStackTrace();
-////        }
-//    }
 }

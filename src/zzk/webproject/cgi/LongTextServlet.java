@@ -25,8 +25,6 @@ import java.util.logging.Logger;
 public class LongTextServlet extends HttpServlet {
     public static final Logger logger = Logger.getLogger(LongTextServlet.class.getName());
 
-    private ChatMessageService chatMessageService;
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String text = request.getParameter("text");
@@ -37,7 +35,7 @@ public class LongTextServlet extends HttpServlet {
         LongTextResponseVO responseVO = new LongTextResponseVO();
         responseVO.setMethod("post");
         if (Objects.nonNull(username) && StringUtil.nonBlank(text)) {
-            chatMessageService = Services.getChatMessageService();
+            ChatMessageService chatMessageService = Services.getChatMessageService();
             String uuid = UUID.randomUUID().toString();
             chatMessageService.mapLongText(uuid, text);
             responseVO.setContent(uuid);

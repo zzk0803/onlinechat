@@ -1,6 +1,6 @@
 package zzk.webproject.cgi;
 
-import zzk.webproject.service.Roster;
+import zzk.webproject.air.Roster;
 
 import javax.imageio.ImageIO;
 import javax.servlet.annotation.WebServlet;
@@ -29,26 +29,37 @@ public class UserIconServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String username = request.getParameter("username");
         HttpSession targetSession = Roster.getSession(username);
-        boolean isOnline = true;
-        if (Objects.isNull(targetSession)) {
-            isOnline = false;
-        }
-        String printString = Character.toString(username.charAt(0));
+        boolean notGray = analysisUserSessionState(targetSession);
+        String printString = getFirstCharInUserName(username);
+        ImageIO.write(
+                generateUserIcon(notGray, printString),
+                "jpg",
+                response.getOutputStream()
+        );
+    }
 
+    private boolean analysisUserSessionState(HttpSession targetSession) {
+        return Objects.isNull(targetSession);
+    }
+
+    private String getFirstCharInUserName(String username) {
+        return Character.toString(username.charAt(0));
+    }
+
+    private BufferedImage generateUserIcon(boolean useGray, String patternString) {
         BufferedImage image = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_INT_RGB);
         Graphics g = image.getGraphics();
-        Color c = isOnline ? new Color(getRGBColorInteger(), getRGBColorInteger(), getRGBColorInteger()) : Color.GRAY;
+        Color c = useGray ? new Color(getRGBColorInteger(), getRGBColorInteger(), getRGBColorInteger()) : Color.GRAY;
         g.setColor(c);
         g.fillRect(0, 0, IMG_WIDTH, IMG_HEIGHT);
 
         g.setColor(Color.WHITE);
         g.setFont(new Font("楷体", Font.PLAIN, 42));
         FontMetrics fontMetrics = g.getFontMetrics();
-        int x_pos = (IMG_WIDTH - fontMetrics.stringWidth(printString)) / 2;
+        int x_pos = (IMG_WIDTH - fontMetrics.stringWidth(patternString)) / 2;
         int y_pos = ((IMG_HEIGHT - fontMetrics.getHeight()) / 2) + fontMetrics.getAscent();
-        g.drawString(printString, x_pos, y_pos);
-
-        ImageIO.write(image, "jpg", response.getOutputStream());
+        g.drawString(patternString, x_pos, y_pos);
+        return image;
     }
 
     private int getRGBColorInteger() {

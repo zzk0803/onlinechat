@@ -3,7 +3,6 @@ package zzk.webproject.air;
 import org.apache.tomcat.websocket.WsSession;
 import zzk.webproject.service.ChatMessageService;
 import zzk.webproject.service.Services;
-import zzk.webproject.service.Roster;
 import zzk.webproject.util.StringUtil;
 
 import javax.websocket.*;
@@ -22,7 +21,7 @@ public class ChatEndpoint {
 
     private static ScheduledExecutorService heartBeatScheduledService = Executors.newSingleThreadScheduledExecutor();
 
-    private static List<Runnable> scheduledRunnableTasks = Collections.singletonList(new Runnable() {
+    private static List<Runnable> heartBeatTestRunnable = Collections.singletonList(new Runnable() {
         @Override
         public void run() {
             AirMessage heartBeat = new AirMessage("TIP");
@@ -42,6 +41,7 @@ public class ChatEndpoint {
     private static ChatMessageService chatMessageService = Services.getChatMessageService();
 
     private static final LinkedList<ChatEndpoint> ENDPOINTS = new LinkedList<>();
+
     private Session session;
 
     static {
@@ -50,7 +50,7 @@ public class ChatEndpoint {
 
     private static void startHeartBeat() {
         LOGGER.info("heart beat test task is start");
-        scheduledRunnableTasks.forEach(runnable -> heartBeatScheduledService.scheduleWithFixedDelay(runnable, 5, HEAT_BEAT_PERIOD, HEART_BEAT_UNIT));
+        heartBeatTestRunnable.forEach(runnable -> heartBeatScheduledService.scheduleWithFixedDelay(runnable, 5, HEAT_BEAT_PERIOD, HEART_BEAT_UNIT));
         heartBeatSwitch = true;
     }
 
@@ -73,8 +73,8 @@ public class ChatEndpoint {
         broadcast(message);
         recordMessage(message);
 
-        transferUnacceptedMessage(session);
-        transferOnlineFriend(session);
+        pushUnacceptedMessage(session);
+        pushOnlineFriend(session);
 
         LOGGER.log(Level.INFO, String.format("用户%s连接到了websocket", username));
     }
@@ -100,7 +100,7 @@ public class ChatEndpoint {
             return;
         }
         String toAccount = airMessage.getToAccount();
-        if (!airMessage.getBroadcastMessage() && StringUtil.nonBlank(toAccount)) {
+        if (notBroadcastMessage(airMessage) && messageNotBlack(toAccount)) {
             ChatEndpoint endpoint = getEndPointByUsername(toAccount);
             sendObject(endpoint, airMessage);
         } else {
@@ -114,6 +114,14 @@ public class ChatEndpoint {
     public void error(Throwable throwable) {
         LOGGER.log(Level.SEVERE, throwable.getMessage());
         end();
+    }
+
+    private boolean messageNotBlack(String toAccount) {
+        return StringUtil.nonBlank(toAccount);
+    }
+
+    private boolean notBroadcastMessage(AirMessage airMessage) {
+        return !airMessage.getBroadcastMessage();
     }
 
     /**
@@ -200,7 +208,7 @@ public class ChatEndpoint {
      *
      * @param session
      */
-    private void transferUnacceptedMessage(Session session) {
+    private void pushUnacceptedMessage(Session session) {
         RemoteEndpoint.Basic basicRemote = session.getBasicRemote();
         chatMessageService.list(airMessage -> MessageType.SHORT_MESSAGE.name().equals(airMessage.getType())
                 || MessageType.REFERENCE.name().equals(airMessage.getType())
@@ -218,7 +226,7 @@ public class ChatEndpoint {
      *
      * @param session
      */
-    private void transferOnlineFriend(Session session) {
+    private void pushOnlineFriend(Session session) {
         RemoteEndpoint.Basic basicRemote = session.getBasicRemote();
         for (ChatEndpoint endpoint : ENDPOINTS) {
             try {

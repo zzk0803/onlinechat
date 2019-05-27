@@ -12,7 +12,6 @@ wp.air.init = function () {
 
     this.websocket.onmessage = function (event) {
         let received = event.data;
-        console.log(received);
         let messageObject = JSON.parse(received);
         let fromAccount = messageObject.fromAccount;
         let isBroadcast = messageObject.broadcastMessage;

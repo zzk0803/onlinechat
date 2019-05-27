@@ -1,7 +1,7 @@
 package zzk.webproject.cgi.listener;
 
 import zzk.webproject.air.ChatEndpoint;
-import zzk.webproject.service.Roster;
+import zzk.webproject.air.Roster;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;

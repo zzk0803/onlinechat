@@ -3,7 +3,7 @@ package zzk.webproject.cgi;
 import zzk.webproject.cgi.vo.AccountResponseVO;
 import zzk.webproject.service.AccountService;
 import zzk.webproject.service.Services;
-import zzk.webproject.service.Roster;
+import zzk.webproject.air.Roster;
 import zzk.webproject.util.StringUtil;
 
 import javax.servlet.ServletException;
@@ -71,7 +71,7 @@ public class AccountServlet extends HttpServlet {
                 break;
 
             default:
-                logger.log(Level.INFO, String.format("前端action参数不合法:%s", accountAction));
+                logger.log(Level.WARNING, String.format("前端action参数不合法:%s", accountAction));
                 break;
         }
     }
